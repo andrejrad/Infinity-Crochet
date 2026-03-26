@@ -1,0 +1,125 @@
+[
+  {
+    "id": "ami-bunny-001",
+    "name": "Cuddle Bunny",
+    "slug": "cuddle-bunny",
+    "category": "amigurumi",
+    "price": 35.00,
+    "description": "An adorable handmade crochet bunny, perfect as a gift or nursery decoration. Made with soft, child-safe yarn.",
+    "image": "/images/products/bunny.jpg",
+    "images": [
+      "/images/products/bunny.jpg",
+      "/images/products/bunny-2.jpg"
+    ],
+    "featured": true,
+    "inStock": true,
+    "tags": ["amigurumi", "bunny", "kids", "gift"]
+  },
+  {
+    "id": "bag-tote-001",
+    "name": "Summer Market Tote",
+    "slug": "summer-market-tote",
+    "category": "bags-totes",
+    "price": 45.00,
+    "description": "A spacious and stylish crochet tote bag, perfect for the beach, market, or everyday use. Features sturdy handles.",
+    "image": "/images/products/tote.jpg",
+    "images": [
+      "/images/products/tote.jpg",
+      "/images/products/tote-2.jpg"
+    ],
+    "featured": true,
+    "inStock": true,
+    "tags": ["bag", "tote", "summer", "beach"]
+  },
+  {
+    "id": "cloth-cardigan-001",
+    "name": "Lavender Fields Cardigan",
+    "slug": "lavender-fields-cardigan",
+    "category": "clothing",
+    "price": 85.00,
+    "description": "A beautiful handmade crochet cardigan in soft lavender tones. Lightweight and perfect for layering.",
+    "image": "/images/products/cardigan.jpg",
+    "images": [
+      "/images/products/cardigan.jpg",
+      "/images/products/cardigan-2.jpg"
+    ],
+    "featured": true,
+    "inStock": true,
+    "tags": ["cardigan", "clothing", "lavender", "wearable"]
+  },
+  {
+    "id": "home-cushion-001",
+    "name": "Boho Cushion Cover",
+    "slug": "boho-cushion-cover",
+    "category": "home-decor",
+    "price": 28.00,
+    "description": "Add warmth to your home with this handmade crochet cushion cover featuring a beautiful boho pattern.",
+    "image": "/images/products/cushion.jpg",
+    "images": [
+      "/images/products/cushion.jpg"
+    ],
+    "featured": false,
+    "inStock": true,
+    "tags": ["home", "cushion", "boho", "decor"]
+  },
+  {
+    "id": "ami-bear-001",
+    "name": "Teddy Bear Classic",
+    "slug": "teddy-bear-classic",
+    "category": "amigurumi",
+    "price": 38.00,
+    "description": "A timeless crochet teddy bear that makes a wonderful companion for children and adults alike.",
+    "image": "/images/products/bear.jpg",
+    "images": [
+      "/images/products/bear.jpg"
+    ],
+    "featured": false,
+    "inStock": true,
+    "tags": ["amigurumi", "bear", "teddy", "classic"]
+  },
+  {
+    "id": "bag-crossbody-001",
+    "name": "Mini Crossbody Bag",
+    "slug": "mini-crossbody-bag",
+    "category": "bags-totes",
+    "price": 42.00,
+    "description": "A cute and functional crochet crossbody bag, perfect for keeping your essentials close while on the go.",
+    "image": "/images/products/crossbody.jpg",
+    "images": [
+      "/images/products/crossbody.jpg"
+    ],
+    "featured": false,
+    "inStock": true,
+    "tags": ["bag", "crossbody", "mini", "functional"]
+  },
+  {
+    "id": "seasonal-ornament-001",
+    "name": "Holiday Ornament Set",
+    "slug": "holiday-ornament-set",
+    "category": "seasonal",
+    "price": 25.00,
+    "description": "A set of 5 handmade crochet ornaments perfect for decorating your tree or home during the holidays.",
+    "image": "/images/products/ornaments.jpg",
+    "images": [
+      "/images/products/ornaments.jpg"
+    ],
+    "featured": false,
+    "inStock": true,
+    "tags": ["seasonal", "holiday", "ornaments", "christmas"]
+  },
+  {
+    "id": "home-blanket-001",
+    "name": "Cozy Throw Blanket",
+    "slug": "cozy-throw-blanket",
+    "category": "home-decor",
+    "price": 95.00,
+    "description": "Wrap yourself in warmth with this handmade crochet throw blanket. Perfect for cozy evenings.",
+    "image": "/images/products/blanket.jpg",
+    "images": [
+      "/images/products/blanket.jpg"
+    ],
+    "featured": true,
+    "inStock": true,
+    "tags": ["blanket", "throw", "cozy", "home"]
+  }
+]

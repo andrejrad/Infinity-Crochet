@@ -1,0 +1,27 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return request.auth != null && 
+             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Product images - anyone can read, only admins can write
+    match /products/{productId}/{allPaths=**} {
+      allow read: if true; // Public read access for shop
+      allow write: if isAdmin(); // Only admins can upload/delete
+    }
+    
+    // Category icons - anyone can read, only admins can write
+    match /categories/{filename} {
+      allow read: if true; // Public read access
+      allow write: if isAdmin(); // Only admins can upload/delete
+    }
+    
+    // Prevent access to other paths
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

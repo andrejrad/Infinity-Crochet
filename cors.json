@@ -1,0 +1,7 @@
+[
+  {
+    "origin": ["https://infinity-crochet.com", "https://infinity-crochet.web.app", "http://localhost:3000"],
+    "method": ["GET", "POST", "DELETE", "PUT", "HEAD"],
+    "maxAgeSeconds": 3600
+  }
+]

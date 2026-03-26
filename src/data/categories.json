@@ -1,0 +1,50 @@
+[
+  {
+    "id": "amigurumi",
+    "name": "Amigurumi",
+    "slug": "amigurumi",
+    "description": "Adorable handmade crochet plushies and characters, perfect for gifts or décor",
+    "image": "/images/categories/amigurumi.jpg",
+    "featured": true
+  },
+  {
+    "id": "bags-totes",
+    "name": "Bags & Totes",
+    "slug": "bags-totes",
+    "description": "Stylish and functional crochet bags, perfect for everyday use",
+    "image": "/images/categories/bags.jpg",
+    "featured": true
+  },
+  {
+    "id": "clothing",
+    "name": "Clothing & Wearables",
+    "slug": "clothing",
+    "description": "Handmade crochet clothing, from cardigans to accessories",
+    "image": "/images/categories/clothing.jpg",
+    "featured": true
+  },
+  {
+    "id": "home-decor",
+    "name": "Home Décor",
+    "slug": "home-decor",
+    "description": "Cozy crochet items to beautify your living space",
+    "image": "/images/categories/home-decor.jpg",
+    "featured": true
+  },
+  {
+    "id": "seasonal",
+    "name": "Seasonal Items",
+    "slug": "seasonal",
+    "description": "Handcrafted items for holidays and special occasions",
+    "image": "/images/categories/seasonal.jpg",
+    "featured": true
+  },
+  {
+    "id": "custom",
+    "name": "Custom Orders",
+    "slug": "custom",
+    "description": "Request personalized crochet pieces made just for you",
+    "image": "/images/categories/custom.jpg",
+    "featured": true
+  }
+]

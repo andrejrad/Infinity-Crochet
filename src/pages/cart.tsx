@@ -1,0 +1,208 @@
+import { useCart } from '@/contexts/CartContext';
+import SEO from '@/components/SEO';
+import Link from 'next/link';
+import Image from 'next/image';
+
+export default function CartPage() {
+  const { cart, removeFromCart, updateQuantity, getCartTotal, clearCart } = useCart();
+
+  if (cart.length === 0) {
+    return (
+      <>
+        <SEO title="Shopping Cart" description="Your shopping cart" />
+        <div className="min-h-screen pt-24 pb-16 bg-gray-50">
+          <div className="container-custom max-w-4xl">
+            <div className="card p-12 text-center">
+              <div className="text-6xl mb-4">🛒</div>
+              <h1 className="text-3xl font-bold text-purple-dark mb-4">
+                Your Cart is Empty
+              </h1>
+              <p className="text-gray-600 mb-6">
+                Looks like you haven't added any items to your cart yet.
+              </p>
+              <Link href="/shop" className="btn-primary inline-block">
+                Continue Shopping
+              </Link>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  const subtotal = getCartTotal();
+  const shipping = subtotal > 50 ? 0 : 10; // Free shipping over $50
+  const estimatedTotal = subtotal + shipping;
+
+  return (
+    <>
+      <SEO title="Shopping Cart" description="Review your shopping cart" />
+      <div className="min-h-screen pt-24 pb-16 bg-gray-50">
+        <div className="container-custom max-w-6xl">
+          <h1 className="text-4xl font-bold text-purple-dark mb-8">Shopping Cart</h1>
+
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Cart Items */}
+            <div className="lg:col-span-2 space-y-4">
+              {cart.map((item, index) => (
+                <div key={`${item.product.id}-${index}`} className="card p-6">
+                  <div className="flex gap-6">
+                    {/* Product Image */}
+                    <Link href={`/shop/product/${item.product.slug}`} className="flex-shrink-0">
+                      <div className="w-24 h-24 rounded-lg overflow-hidden bg-gradient-to-br from-lilac-light to-white">
+                        {item.product.image ? (
+                          <img
+                            src={item.product.image}
+                            alt={item.product.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-4xl">
+                            🧶
+                          </div>
+                        )}
+                      </div>
+                    </Link>
+
+                    {/* Product Info */}
+                    <div className="flex-1">
+                      <Link href={`/shop/product/${item.product.slug}`}>
+                        <h3 className="text-lg font-semibold text-purple-dark hover:text-purple">
+                          {item.product.name}
+                        </h3>
+                      </Link>
+                      <p className="text-sm text-gray-600 mt-1">${item.product.price.toFixed(2)} each</p>
+
+                      {/* Selected Colors */}
+                      {item.selectedColors && (
+                        <div className="mt-2 space-y-1">
+                          {item.selectedColors.option1 && (
+                            <p className="text-xs text-gray-600">
+                              Color 1: {item.selectedColors.option1}
+                            </p>
+                          )}
+                          {item.selectedColors.option2 && (
+                            <p className="text-xs text-gray-600">
+                              Color 2: {item.selectedColors.option2}
+                            </p>
+                          )}
+                          {item.selectedColors.option3 && (
+                            <p className="text-xs text-gray-600">
+                              Color 3: {item.selectedColors.option3}
+                            </p>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Quantity Controls */}
+                      <div className="flex items-center gap-4 mt-4">
+                        <div className="flex items-center border border-gray-300 rounded-lg">
+                          <button
+                            onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                            className="px-3 py-1 hover:bg-gray-100 transition-colors"
+                          >
+                            −
+                          </button>
+                          <span className="px-4 py-1 border-x border-gray-300">
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                            className="px-3 py-1 hover:bg-gray-100 transition-colors"
+                          >
+                            +
+                          </button>
+                        </div>
+
+                        <button
+                          onClick={() => removeFromCart(item.product.id)}
+                          className="text-red-600 hover:text-red-800 text-sm"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Item Total */}
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-purple">
+                        ${(item.product.price * item.quantity).toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              <button
+                onClick={clearCart}
+                className="text-red-600 hover:text-red-800 text-sm"
+              >
+                Clear Cart
+              </button>
+            </div>
+
+            {/* Order Summary */}
+            <div className="lg:col-span-1">
+              <div className="card p-6 sticky top-24">
+                <h2 className="text-2xl font-bold text-purple-dark mb-4">Order Summary</h2>
+
+                <div className="space-y-3 mb-6">
+                  <div className="flex justify-between text-gray-700">
+                    <span>Subtotal</span>
+                    <span>${subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-gray-700">
+                    <span>Shipping</span>
+                    <span>{shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}</span>
+                  </div>
+                  {shipping === 0 && (
+                    <p className="text-xs text-green-600">🎉 You qualify for free shipping!</p>
+                  )}
+                  {shipping > 0 && subtotal > 0 && subtotal < 50 && (
+                    <p className="text-xs text-gray-600">
+                      Add ${(50 - subtotal).toFixed(2)} more for free shipping
+                    </p>
+                  )}
+                  <div className="flex justify-between text-gray-700">
+                    <span>Tax</span>
+                    <span className="text-sm">At checkout</span>
+                  </div>
+                  <div className="border-t border-gray-300 pt-3 flex justify-between text-xl font-bold text-purple-dark">
+                    <span>Estimated Total</span>
+                    <span>${estimatedTotal.toFixed(2)}</span>
+                  </div>
+                  <p className="text-xs text-gray-500 text-center mt-2">
+                    Tax calculated at checkout
+                  </p>
+                </div>
+
+                <Link href="/checkout" className="btn-primary w-full text-center block mb-3">
+                  Proceed to Checkout
+                </Link>
+
+                <Link href="/shop" className="btn-secondary w-full text-center block">
+                  Continue Shopping
+                </Link>
+
+                <div className="mt-6 pt-6 border-t border-gray-200 space-y-2 text-sm text-gray-600">
+                  <div className="flex items-start gap-2">
+                    <span className="text-purple">✓</span>
+                    <span>Secure checkout</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-purple">✓</span>
+                    <span>Free shipping on orders over $50</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-purple">✓</span>
+                    <span>Handmade with care</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
