@@ -1,0 +1,13 @@
+# Firebase Cloud Functions (deployed separately)
+functions/
+
+# Firebase configs
+.firebase/
+firebase.json
+firestore.rules
+storage.rules
+.firebaserc
+
+# Other
+*.md
+!README.md
