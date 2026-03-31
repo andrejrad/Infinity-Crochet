@@ -3,17 +3,20 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useCart } from '../contexts/CartContext';
+import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 export default function Checkout() {
   const router = useRouter();
   const { cart, getCartTotal } = useCart();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [loadingRates, setLoadingRates] = useState(false);
   const [error, setError] = useState('');
   const [shippingRates, setShippingRates] = useState<any[]>([]);
   const [selectedRate, setSelectedRate] = useState<any>(null);
+  const [insurance, setInsurance] = useState({ enabled: false, cost: 2.50 });
 
   // Form state
   const [formData, setFormData] = useState({
@@ -26,6 +29,7 @@ export default function Checkout() {
     state: '',
     zipCode: '',
     country: 'US',
+    notes: '',
   });
 
   // Redirect if cart is empty
@@ -66,21 +70,30 @@ export default function Checkout() {
       });
 
       const data = await response.json();
+      console.log('Shipping rates response:', data);
+      console.log('Response OK?', response.ok);
+      console.log('Rates count:', data.rates?.length);
+      
       if (response.ok) {
         setShippingRates(data.rates || []);
         // Auto-select cheapest rate
         if (data.rates && data.rates.length > 0) {
           setSelectedRate(data.rates[0]);
+          console.log('Selected cheapest rate:', data.rates[0]);
         }
+      } else {
+        console.error('API error:', data);
+        setError(data.error || 'Failed to get shipping rates');
       }
     } catch (err) {
       console.error('Error fetching rates:', err);
+      setError('Failed to get shipping rates');
     } finally {
       setLoadingRates(false);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -114,7 +127,15 @@ export default function Checkout() {
           items: cart,
           customerInfo: formData,
           shippingRate: selectedRate,
-        }),
+          userId: user?.uid || null,
+          notes: formData.notes,
+          insurance: insurance.enabled ? {
+            enabled: true,
+            cost: insurance.cost,
+            coverage: subtotal,
+          } : {
+            enabled: false,
+          },        }),
       });
 
       const data = await response.json();
@@ -338,8 +359,55 @@ export default function Checkout() {
                           <option value="CA">Canada</option>
                           <option value="GB">United Kingdom</option>
                           <option value="AU">Australia</option>
+                          <option value="" disabled>──── EU Countries ────</option>
+                          <option value="AT">Austria</option>
+                          <option value="BE">Belgium</option>
+                          <option value="BG">Bulgaria</option>
+                          <option value="HR">Croatia</option>
+                          <option value="CY">Cyprus</option>
+                          <option value="CZ">Czech Republic</option>
+                          <option value="DK">Denmark</option>
+                          <option value="EE">Estonia</option>
+                          <option value="FI">Finland</option>
+                          <option value="FR">France</option>
+                          <option value="DE">Germany</option>
+                          <option value="GR">Greece</option>
+                          <option value="HU">Hungary</option>
+                          <option value="IE">Ireland</option>
+                          <option value="IT">Italy</option>
+                          <option value="LV">Latvia</option>
+                          <option value="LT">Lithuania</option>
+                          <option value="LU">Luxembourg</option>
+                          <option value="MT">Malta</option>
+                          <option value="NL">Netherlands</option>
+                          <option value="PL">Poland</option>
+                          <option value="PT">Portugal</option>
+                          <option value="RO">Romania</option>
+                          <option value="SK">Slovakia</option>
+                          <option value="SI">Slovenia</option>
+                          <option value="ES">Spain</option>
+                          <option value="SE">Sweden</option>
                         </select>
                       </div>
+                    </div>
+
+                    {/* Customer Notes */}
+                    <div>
+                      <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-2">
+                        Order Notes (Optional)
+                      </label>
+                      <textarea
+                        id="notes"
+                        name="notes"
+                        rows={4}
+                        value={formData.notes}
+                        onChange={handleChange}
+                        placeholder="Any special requests or instructions for your order..."
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Let us know if you have any special color preferences, gift messages, or other requests.
+                      </p>
                     </div>
                   </div>
 
@@ -411,7 +479,48 @@ export default function Checkout() {
                     )}
                   </div>
 
+                  {/* Shipping Insurance */}
+                  {selectedRate && (
+                    <div className="mb-8">
+                      <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                        Shipping Insurance
+                      </h2>
+                      <div className="border-2 border-gray-200 rounded-lg p-4">
+                        <label className="flex items-start gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={insurance.enabled}
+                            onChange={(e) => setInsurance({ ...insurance, enabled: e.target.checked })}
+                            className="w-5 h-5 text-purple-600 mt-1 cursor-pointer"
+                          />
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between">
+                              <span className="font-medium text-gray-900">
+                                Protect your package
+                              </span>
+                              <span className="text-lg font-bold text-gray-900">
+                                +${insurance.cost.toFixed(2)}
+                              </span>
+                            </div>
+                            <p className="text-sm text-gray-600 mt-1">
+                              Covers loss or damage up to ${subtotal.toFixed(2)} during shipping
+                            </p>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Submit Button */}
+                  <div className="bg-purple-100 border-2 border-purple-400 rounded-lg p-4 mb-4">
+                    <p className="text-sm font-semibold text-purple-900">
+                      ✅ Review Your Shipping Address Above
+                    </p>
+                    <p className="text-xs text-purple-700 mt-1">
+                      This address will be used for shipping. The payment page will only ask for card details.
+                    </p>
+                  </div>
+                  
                   <button
                     type="submit"
                     disabled={!isFormValid() || loading}
@@ -426,7 +535,7 @@ export default function Checkout() {
                         Processing...
                       </span>
                     ) : (
-                      `Proceed to Payment - $${estimatedTotal.toFixed(2)}+`
+                      `Proceed to Payment - $${estimatedTotal.toFixed(2)}`
                     )}
                   </button>
 
@@ -444,11 +553,23 @@ export default function Checkout() {
                   {/* Cart Items */}
                   <div className="space-y-4 mb-6 max-h-64 overflow-y-auto">
                     {cart.map((item) => {
-                      const colorValues = item.selectedColors 
-                        ? Object.values(item.selectedColors).filter(Boolean)
-                        : [];
+                      // Build color labels array with proper names
+                      const colorLabels = [];
+                      if (item.selectedColors?.option1) {
+                        const label = item.product.colorOptions?.option1?.label || 'Color 1';
+                        colorLabels.push(`${label}: ${item.selectedColors.option1}`);
+                      }
+                      if (item.selectedColors?.option2) {
+                        const label = item.product.colorOptions?.option2?.label || 'Color 2';
+                        colorLabels.push(`${label}: ${item.selectedColors.option2}`);
+                      }
+                      if (item.selectedColors?.option3) {
+                        const label = item.product.colorOptions?.option3?.label || 'Color 3';
+                        colorLabels.push(`${label}: ${item.selectedColors.option3}`);
+                      }
+                      
                       return (
-                      <div key={`${item.product.id}-${colorValues.join(',')}`} className="flex gap-4">
+                      <div key={`${item.product.id}-${colorLabels.join(',')}`} className="flex gap-4">
                         <img
                           src={item.product.images?.[0] || '/placeholder.jpg'}
                           alt={item.product.name}
@@ -456,9 +577,9 @@ export default function Checkout() {
                         />
                         <div className="flex-1">
                           <h3 className="font-medium text-gray-900 text-sm">{item.product.name}</h3>
-                          {colorValues.length > 0 && (
+                          {colorLabels.length > 0 && (
                             <p className="text-xs text-gray-500">
-                              Colors: {colorValues.join(', ')}
+                              {colorLabels.join(', ')}
                             </p>
                           )}
                           <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
@@ -470,6 +591,34 @@ export default function Checkout() {
                     );
                     })}
                   </div>
+
+                  {/* Shipping Address Review */}
+                  {(formData.addressLine1 || formData.city) && (
+                    <div className="border-t border-b border-gray-200 py-4 mb-6 bg-purple-50">
+                      <h3 className="text-base font-bold text-purple-900 mb-3">📦 Shipping Address</h3>
+                      <div className="text-sm text-gray-600">
+                        {formData.name && <p className="font-medium text-gray-900">{formData.name}</p>}
+                        {formData.addressLine1 && <p>{formData.addressLine1}</p>}
+                        {formData.addressLine2 && <p>{formData.addressLine2}</p>}
+                        {(formData.city || formData.state || formData.zipCode) && (
+                          <p>
+                            {formData.city}{formData.city && formData.state && ', '}{formData.state} {formData.zipCode}
+                          </p>
+                        )}
+                        {formData.country && formData.country !== 'US' && <p>{formData.country}</p>}
+                      </div>
+                      {formData.email && (
+                        <p className="text-xs text-gray-500 mt-2">
+                          ✉️ {formData.email}
+                        </p>
+                      )}
+                      {formData.phone && (
+                        <p className="text-xs text-gray-500">
+                          📞 {formData.phone}
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   {/* Totals */}
                   <div className="border-t border-gray-200 pt-6 space-y-3">
@@ -495,6 +644,12 @@ export default function Checkout() {
                       <span>Tax</span>
                       <span className="text-sm">At checkout</span>
                     </div>
+                    {insurance.enabled && (
+                      <div className="flex justify-between text-gray-600">
+                        <span>Insurance</span>
+                        <span>${insurance.cost.toFixed(2)}</span>
+                      </div>
+                    )}
                     <div className="border-t border-gray-200 pt-3 flex justify-between text-xl font-bold text-gray-900">
                       <span>Estimated Total</span>
                       <span>${estimatedTotal.toFixed(2)}</span>

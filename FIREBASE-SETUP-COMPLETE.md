@@ -74,7 +74,7 @@ Your site will be instantly live at:
    - Edit `/src/data/categories.json`
 
 4. **Update Contact Info**
-   - Replace `contact@infinity-crochet.com` with your email
+   - Replace `infinitycrochet1@gmail.com` with your email
    - Update social media links in Footer
 
 ### After Initial Deploy:

@@ -1,9 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-const Shippo = require('shippo');
-
-const getShippo = () => {
-  return Shippo({ apiKeyHeader: process.env.SHIPPO_API_KEY });
-};
+import { NextApiRequest, NextApiResponse} from 'next';
 
 export default async function handler(
   req: NextApiRequest,
@@ -26,7 +21,9 @@ export default async function handler(
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    const shippo = getShippo();
+    // Import and initialize Shippo SDK
+    const { Shippo, WeightUnitEnum, DistanceUnitEnum } = await import('shippo');
+    const shippo = new Shippo({ apiKeyHeader: process.env.SHIPPO_API_KEY });
 
     // Calculate total weight (assuming each item is ~8oz for crochet items)
     const totalWeight = items.reduce((sum: number, item: any) => {
@@ -41,6 +38,8 @@ export default async function handler(
       state: process.env.SHIPPO_FROM_STATE || "CA",
       zip: process.env.SHIPPO_FROM_ZIP || "90001",
       country: "US",
+      email: process.env.SHIPPO_FROM_EMAIL || "contact@infinitycrochet.com",
+      phone: process.env.SHIPPO_FROM_PHONE || "5555555555",
     };
 
     // Customer's address
@@ -59,24 +58,34 @@ export default async function handler(
       length: "12",
       width: "10",
       height: "6",
-      distance_unit: "in",
+      distanceUnit: DistanceUnitEnum.In,
       weight: totalWeight.toString(),
-      mass_unit: "oz",
+      massUnit: WeightUnitEnum.Oz,
     };
+
+    // Log all parameters being sent to Shippo
+    console.log('=== SHIPPO REQUEST PARAMETERS ===');
+    console.log('From Address:', JSON.stringify(fromAddress, null, 2));
+    console.log('To Address:', JSON.stringify(toAddress, null, 2));
+    console.log('Parcel:', JSON.stringify(parcel, null, 2));
+    console.log('Total Weight:', totalWeight, 'oz');
+    console.log('Items:', JSON.stringify(items, null, 2));
 
     // Create shipment to get rates
     const shipment = await shippo.shipments.create({
-      address_from: fromAddress,
-      address_to: toAddress,
+      addressFrom: fromAddress,
+      addressTo: toAddress,
       parcels: [parcel],
       async: false,
     });
 
-    // Filter and format rates
+    console.log('=== SHIPPO RESPONSE ===');
+    console.log('Shipment:', JSON.stringify(shipment, null, 2));
+
+    // Filter and format rates - Shippo v2 doesn't have 'available' property, all returned rates are available
     const rates = shipment.rates
-      .filter((rate: any) => rate.available)
       .map((rate: any) => ({
-        objectId: rate.object_id,
+        objectId: rate.objectId,
         provider: rate.provider,
         servicelevel: {
           name: rate.servicelevel.name,
@@ -84,12 +93,16 @@ export default async function handler(
         },
         amount: parseFloat(rate.amount),
         currency: rate.currency,
-        estimatedDays: rate.estimated_days,
-        durationTerms: rate.duration_terms,
+        estimatedDays: rate.estimatedDays,
+        durationTerms: rate.durationTerms,
       }))
       .sort((a: any, b: any) => a.amount - b.amount); // Sort by price
 
-    res.status(200).json({ rates, shipmentId: shipment.object_id });
+    console.log('=== FORMATTED RATES ===');
+    console.log('Rates count:', rates.length);
+    console.log('Rates:', JSON.stringify(rates, null, 2));
+
+    res.status(200).json({ rates, shipmentId: shipment.objectId });
   } catch (error: any) {
     console.error('Shippo rate error:', error);
     console.error('Error details:', JSON.stringify(error, null, 2));

@@ -14,7 +14,7 @@ export default async function handler(
   }
 
   try {
-    const { amount, items, customerInfo } = req.body;
+    const { amount, items, customerInfo, shippingRate, userId, insurance, notes } = req.body;
 
     // Validate input
     if (!amount || !items || !customerInfo) {
@@ -42,33 +42,70 @@ export default async function handler(
       };
     });
 
-    // Add shipping if applicable
-    const subtotal = items.reduce((sum: number, item: any) => sum + (item.product.price * item.quantity), 0);
-    const shippingCost = subtotal >= 50 ? 0 : 10;
-    
-    if (shippingCost > 0) {
+    // Add shipping from Shippo rate
+    if (shippingRate && shippingRate.amount) {
       lineItems.push({
         price_data: {
           currency: 'usd',
           product_data: {
-            name: 'Shipping',
+            name: `Shipping - ${shippingRate.provider} ${shippingRate.servicelevel?.name || ''}`,
           },
-          unit_amount: shippingCost * 100,
+          unit_amount: Math.round(shippingRate.amount * 100), // Convert to cents
         },
         quantity: 1,
       });
     }
 
+    // Add insurance if enabled
+    if (insurance?.enabled && insurance?.cost) {
+      lineItems.push({
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: 'Shipping Insurance',
+            description: `Package protection up to $${insurance.coverage?.toFixed(2) || '0.00'}`,
+          },
+          unit_amount: Math.round(insurance.cost * 100), // Convert to cents
+        },
+        quantity: 1,
+      });
+    }
+
+    // Create simplified items for metadata (Stripe has 500 char limit per field)
+    const simplifiedItems = items.map((item: any) => ({
+      id: item.product.id,
+      name: item.product.name,
+      quantity: item.quantity,
+      price: item.product.price,
+      colors: item.selectedColors || {},
+    }));
+
+    // Create or retrieve Stripe customer with shipping address prefilled
+    const customer = await stripe.customers.create({
+      email: customerInfo.email,
+      name: customerInfo.name,
+      phone: customerInfo.phone,
+      address: {
+        line1: customerInfo.addressLine1,
+        line2: customerInfo.addressLine2 || undefined,
+        city: customerInfo.city,
+        state: customerInfo.state,
+        postal_code: customerInfo.zipCode,
+        country: customerInfo.country,
+      },
+    });
+
     // Create Stripe Checkout Session
-    const session = await stripe.checkout.sessions.create({
+    const sessionConfig: any = {
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
       success_url: `${req.headers.origin}/order/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.origin}/checkout`,
-      customer_email: customerInfo.email,
-      shipping_address_collection: {
-        allowed_countries: ['US', 'CA', 'GB', 'AU'],
+      customer: customer.id,
+      billing_address_collection: 'auto', // Only collect when required, prefilled with customer address
+      automatic_tax: {
+        enabled: true,
       },
       metadata: {
         customerName: customerInfo.name,
@@ -79,9 +116,24 @@ export default async function handler(
         state: customerInfo.state,
         zipCode: customerInfo.zipCode,
         country: customerInfo.country,
-        items: JSON.stringify(items),
+        items: JSON.stringify(simplifiedItems),
+        shippingCarrier: shippingRate?.provider || '',
+        shippingService: shippingRate?.servicelevel?.name || '',
+        shippingCost: shippingRate?.amount?.toString() || '0',
+        shippingRateId: shippingRate?.objectId || '',
+        insuranceEnabled: insurance?.enabled?.toString() || 'false',
+        insuranceCost: insurance?.cost?.toString() || '0',
+        insuranceCoverage: insurance?.coverage?.toString() || '0',
+        notes: notes ? notes.substring(0, 500) : '', // Truncate to Stripe's 500 char limit
       },
-    });
+    };
+
+    // Only set client_reference_id if userId is provided (for logged-in users)
+    if (userId) {
+      sessionConfig.client_reference_id = userId;
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionConfig);
 
     res.status(200).json({ url: session.url, sessionId: session.id });
   } catch (error: any) {

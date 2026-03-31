@@ -14,7 +14,7 @@ export default function ProtectedRoute({ children, requireAdmin = false }: Prote
   useEffect(() => {
     if (!loading) {
       if (!user) {
-        router.push('/login');
+        router.push(`/login?redirect=${encodeURIComponent(router.asPath)}`);
       } else if (requireAdmin && !isAdmin) {
         router.push('/account');
       }

@@ -5,13 +5,12 @@ import Link from 'next/link';
 import { collection, query, orderBy, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { useAuth } from '../../contexts/AuthContext';
-import Navbar from '../../components/Navbar';
-import Footer from '../../components/Footer';
+import ProtectedRoute from '../../components/ProtectedRoute';
 import type { Order } from '../../types/user';
 
 export default function AdminOrders() {
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>('all');
@@ -20,21 +19,10 @@ export default function AdminOrders() {
   const [creatingLabel, setCreatingLabel] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push('/login?redirect=/admin/orders');
-      return;
-    }
-
-    // Check if user is admin
-    if (user && user.email !== 'admin@infinitycrochet.com') {
-      router.push('/');
-      return;
-    }
-
     if (user) {
       fetchOrders();
     }
-  }, [user, authLoading, router]);
+  }, [user]);
 
   const fetchOrders = async () => {
     try {
@@ -77,8 +65,8 @@ export default function AdminOrders() {
   };
 
   const handleCreateLabel = async (order: Order) => {
-    if (!order.shippingcarrier) {
-      alert('Please get shipping rates first. Contact support for manual label creation.');
+    if (!order.shippingRateId) {
+      alert('Shipping rate not found. Please contact support for manual label creation.');
       return;
     }
 
@@ -89,7 +77,7 @@ export default function AdminOrders() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           orderId: order.id,
-          rateId: order.shippingcarrier, // This should be the rate object ID from Shippo
+          rateId: order.shippingRateId, // Use the correct Shippo rate ID
         }),
       });
 
@@ -109,9 +97,11 @@ export default function AdminOrders() {
           window.open(data.labelUrl, '_blank');
         }
       } else {
-        alert('Failed to create label: ' + data.error);
+        console.error('Label creation failed:', data);
+        alert('Failed to create label: ' + (data.error || 'Unknown error. Check console for details.'));
       }
     } catch (error: any) {
+      console.error('Error creating label:', error);
       alert('Error creating label: ' + error.message);
     } finally {
       setCreatingLabel(null);
@@ -155,39 +145,24 @@ export default function AdminOrders() {
     processing: orders.filter(o => o.status === 'processing').length,
     shipped: orders.filter(o => o.status === 'shipped').length,
     delivered: orders.filter(o => o.status === 'delivered').length,
-    revenue: orders.reduce((sum, order) => sum + order.total, 0),
+    revenue: orders.reduce((sum, order) => sum + order.subtotal, 0),
   };
 
-  if (authLoading || loading) {
-    return (
-      <>
-        <Head>
-          <title>Order Management - Infinity Crochet Admin</title>
-        </Head>
-        <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
-          <Navbar />
-          <main className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading orders...</p>
-            </div>
-          </main>
-          <Footer />
-        </div>
-      </>
-    );
-  }
-
   return (
-    <>
+    <ProtectedRoute requireAdmin>
       <Head>
         <title>Order Management - Infinity Crochet Admin</title>
       </Head>
 
-      <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
-        <Navbar />
-
-        <main className="flex-1 py-12">
+      {loading ? (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading orders...</p>
+          </div>
+        </div>
+      ) : (
+        <div className="min-h-screen pt-24 pb-16 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mb-8 flex items-center justify-between">
               <div>
@@ -286,12 +261,28 @@ export default function AdminOrders() {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {filteredOrders.map((order) => (
-                        <tr key={order.id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="font-mono text-sm text-gray-900">
-                              {order.id?.substring(0, 8)}...
-                            </span>
-                          </td>
+                        <>
+                          <tr 
+                            key={order.id} 
+                            className="hover:bg-gray-50 cursor-pointer"
+                            onClick={() => setExpandedOrderId(expandedOrderId === order.id ? null : order.id!)}
+                          >
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="flex items-center gap-2">
+                                <button
+                                  className="text-gray-400 hover:text-gray-600"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setExpandedOrderId(expandedOrderId === order.id ? null : order.id!);
+                                  }}
+                                >
+                                  {expandedOrderId === order.id ? '▼' : '▶'}
+                                </button>
+                                <span className="font-mono text-sm text-gray-900">
+                                  {order.orderNumber || `${order.id?.substring(0, 8)}...`}
+                                </span>
+                              </div>
+                            </td>
                           <td className="px-6 py-4">
                             <div>
                               <p className="text-sm font-medium text-gray-900">
@@ -341,7 +332,7 @@ export default function AdminOrders() {
                             )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-2" onClick={(e) => e.stopPropagation()}>
                               <select
                                 value={order.status}
                                 onChange={(e) => updateOrderStatus(order.id!, e.target.value)}
@@ -366,6 +357,179 @@ export default function AdminOrders() {
                             </div>
                           </td>
                         </tr>
+                        
+                        {/* Expanded Order Details */}
+                        {expandedOrderId === order.id && (
+                          <tr>
+                            <td colSpan={8} className="px-6 py-6 bg-gray-50">
+                              <div className="space-y-6">
+                                {/* Order Information */}
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                  <div>
+                                    <h4 className="text-sm font-semibold text-gray-700 mb-3">Customer Information</h4>
+                                    <div className="space-y-1 text-sm">
+                                      <p><span className="text-gray-500">Name:</span> <span className="font-medium">{order.customerName}</span></p>
+                                      <p><span className="text-gray-500">Email:</span> <span className="font-medium">{order.email}</span></p>
+                                      <p><span className="text-gray-500">Phone:</span> <span className="font-medium">{order.phone || 'N/A'}</span></p>
+                                    </div>
+                                  </div>
+                                  
+                                  <div>
+                                    <h4 className="text-sm font-semibold text-gray-700 mb-3">Shipping Address</h4>
+                                    <div className="text-sm">
+                                      <p>{order.shippingAddress.line1}</p>
+                                      {order.shippingAddress.line2 && <p>{order.shippingAddress.line2}</p>}
+                                      <p>{order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zipCode}</p>
+                                      <p>{order.shippingAddress.country}</p>
+                                    </div>
+                                  </div>
+                                  
+                                  <div>
+                                    <h4 className="text-sm font-semibold text-gray-700 mb-3">Shipping Details</h4>
+                                    <div className="space-y-1 text-sm">
+                                      <p><span className="text-gray-500">Carrier:</span> <span className="font-medium">{order.shippingCarrier || 'N/A'}</span></p>
+                                      <p><span className="text-gray-500">Service:</span> <span className="font-medium">{order.shippingService || 'N/A'}</span></p>
+                                      <p><span className="text-gray-500">Cost:</span> <span className="font-medium">${order.shippingCost?.toFixed(2) || order.shipping.toFixed(2)}</span></p>
+                                      {order.insuranceEnabled && (
+                                        <p>
+                                          <span className="text-gray-500">Insurance:</span>{' '}
+                                          <span className="font-medium text-green-600">✓ Insured</span>{' '}
+                                          <span className="text-xs text-gray-500">
+                                            (${order.insuranceCoverage?.toFixed(2) || '0.00'} coverage, +${order.insuranceCost?.toFixed(2) || '0.00'})
+                                          </span>
+                                        </p>
+                                      )}
+                                      {order.trackingNumber && (
+                                        <p><span className="text-gray-500">Tracking:</span> <a href={order.trackingUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-mono text-xs">{order.trackingNumber}</a></p>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                {/* Customer Notes */}
+                                {order.notes && (
+                                  <div className="mt-4">
+                                    <h4 className="text-sm font-semibold text-gray-700 mb-3">📝 Customer Notes</h4>
+                                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                      <p className="text-sm text-gray-700 whitespace-pre-wrap">{order.notes}</p>
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                {/* Order Items */}
+                                <div>
+                                  <h4 className="text-sm font-semibold text-gray-700 mb-3">Order Items</h4>
+                                  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                                    <table className="min-w-full">
+                                      <thead className="bg-gray-100">
+                                        <tr>
+                                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Item</th>
+                                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Colors</th>
+                                          <th className="px-4 py-2 text-center text-xs font-medium text-gray-500">Qty</th>
+                                          <th className="px-4 py-2 text-right text-xs font-medium text-gray-500">Price</th>
+                                          <th className="px-4 py-2 text-right text-xs font-medium text-gray-500">Total</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody className="divide-y divide-gray-200">
+                                        {order.products.map((item: any, idx: number) => {
+                                          // Get colors object (either from colors or selectedColors field)
+                                          const colorsObj = item.colors || item.selectedColors || {};
+                                          
+                                          // Build color display with labels
+                                          const colorDisplay: string[] = [];
+                                          if (colorsObj.option1) {
+                                            const label = item.colorOptions?.option1?.label || 'Color 1';
+                                            colorDisplay.push(`${label}: ${colorsObj.option1}`);
+                                          }
+                                          if (colorsObj.option2) {
+                                            const label = item.colorOptions?.option2?.label || 'Color 2';
+                                            colorDisplay.push(`${label}: ${colorsObj.option2}`);
+                                          }
+                                          if (colorsObj.option3) {
+                                            const label = item.colorOptions?.option3?.label || 'Color 3';
+                                            colorDisplay.push(`${label}: ${colorsObj.option3}`);
+                                          }
+                                          
+                                          return (
+                                            <tr key={idx}>
+                                              <td className="px-4 py-3 text-sm font-medium text-gray-900">{item.name}</td>
+                                              <td className="px-4 py-3 text-sm text-gray-600">
+                                                {colorDisplay.length > 0 ? (
+                                                  <div className="space-y-1">
+                                                    {colorDisplay.map((color, i) => (
+                                                      <div key={i}>{color}</div>
+                                                    ))}
+                                                  </div>
+                                                ) : '-'}
+                                              </td>
+                                              <td className="px-4 py-3 text-sm text-gray-900 text-center">{item.quantity}</td>
+                                              <td className="px-4 py-3 text-sm text-gray-900 text-right">${item.price.toFixed(2)}</td>
+                                              <td className="px-4 py-3 text-sm font-medium text-gray-900 text-right">
+                                                ${(item.price * item.quantity).toFixed(2)}
+                                              </td>
+                                            </tr>
+                                          );
+                                        })}
+                                      </tbody>
+                                      <tfoot className="bg-gray-50">
+                                        <tr>
+                                          <td colSpan={4} className="px-4 py-2 text-sm text-right text-gray-600">Subtotal:</td>
+                                          <td className="px-4 py-2 text-sm text-right font-medium">${order.subtotal.toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                          <td colSpan={4} className="px-4 py-2 text-sm text-right text-gray-600">Shipping:</td>
+                                          <td className="px-4 py-2 text-sm text-right font-medium">${order.shipping.toFixed(2)}</td>
+                                        </tr>
+                                        {order.insuranceEnabled && (
+                                          <tr>
+                                            <td colSpan={4} className="px-4 py-2 text-sm text-right text-gray-600">
+                                              Insurance:
+                                              <span className="ml-1 text-xs text-gray-500">(${order.insuranceCoverage?.toFixed(2) || '0.00'} coverage)</span>
+                                            </td>
+                                            <td className="px-4 py-2 text-sm text-right font-medium">${order.insuranceCost?.toFixed(2) || '0.00'}</td>
+                                          </tr>
+                                        )}
+                                        {order.tax > 0 && (
+                                          <tr>
+                                            <td colSpan={4} className="px-4 py-2 text-sm text-right text-gray-600">Tax:</td>
+                                            <td className="px-4 py-2 text-sm text-right font-medium">${order.tax.toFixed(2)}</td>
+                                          </tr>
+                                        )}
+                                        <tr className="border-t-2 border-gray-300">
+                                          <td colSpan={4} className="px-4 py-3 text-sm text-right font-semibold text-gray-900">Total:</td>
+                                          <td className="px-4 py-3 text-sm text-right font-bold text-purple-600">${order.total.toFixed(2)}</td>
+                                        </tr>
+                                      </tfoot>
+                                    </table>
+                                  </div>
+                                </div>
+                                
+                                {/* Payment Information */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                  <div>
+                                    <h4 className="text-sm font-semibold text-gray-700 mb-3">Payment Information</h4>
+                                    <div className="space-y-1 text-sm">
+                                      <p><span className="text-gray-500">Payment Status:</span> <span className="font-medium capitalize">{order.paymentStatus}</span></p>
+                                      <p><span className="text-gray-500">Payment Intent:</span> <span className="font-mono text-xs">{order.paymentIntent}</span></p>
+                                      {order.stripeSessionId && (
+                                        <p><span className="text-gray-500">Session ID:</span> <span className="font-mono text-xs">{order.stripeSessionId}</span></p>
+                                      )}
+                                    </div>
+                                  </div>
+                                  
+                                  <div>
+                                    <h4 className="text-sm font-semibold text-gray-700 mb-3">Order Dates</h4>
+                                    <div className="space-y-1 text-sm">
+                                      <p><span className="text-gray-500">Created:</span> <span className="font-medium">{formatDate(order.createdAt)}</span></p>
+                                      <p><span className="text-gray-500">Updated:</span> <span className="font-medium">{formatDate(order.updatedAt)}</span></p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                        </>
                       ))}
                     </tbody>
                   </table>
@@ -373,10 +537,8 @@ export default function AdminOrders() {
               </div>
             )}
           </div>
-        </main>
-
-        <Footer />
-      </div>
-    </>
+        </div>
+      )}
+    </ProtectedRoute>
   );
 }

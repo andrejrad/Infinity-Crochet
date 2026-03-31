@@ -37,8 +37,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser({
             uid: firebaseUser.uid,
             email: firebaseUser.email,
-            displayName: firebaseUser.displayName,
-            photoURL: firebaseUser.photoURL,
+            displayName: userData.displayName || firebaseUser.displayName,
+            photoURL: userData.photoURL || firebaseUser.photoURL,
             role: userData.role || 'user',
             createdAt: userData.createdAt?.toDate() || new Date(),
           });

@@ -183,7 +183,7 @@ Edit `src/data/categories.json` to modify categories:
 
 ### 5. Update Contact Information
 
-Search for `contact@infinity-crochet.com` across the project and replace with your actual email address.
+Search for `infinitycrochet1@gmail.com` across the project and replace with your actual email address.
 
 Files to update:
 - `src/components/Footer.tsx`
@@ -354,7 +354,7 @@ Purple Dark: #5B2C6F
 ## 📞 Support & Contact
 
 For questions about this website, contact:
-- **Email**: contact@infinity-crochet.com
+- **Email**: infinitycrochet1@gmail.com
 - **Instagram**: [@crochet_by_infinity](https://www.instagram.com/crochet_by_infinity)
 
 ## 📄 License

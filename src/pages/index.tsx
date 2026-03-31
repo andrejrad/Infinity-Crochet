@@ -52,61 +52,6 @@ export default function Home() {
       {/* Hero Section */}
       <Hero />
 
-      {/* About Section */}
-      <section id="about" className="section-padding bg-white">
-        <div className="container-custom">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl md:text-5xl font-bold text-purple-dark mb-6">
-              About Infinity Crochet
-            </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-lilac to-purple mx-auto mb-8"></div>
-            <p className="text-lg text-gray-700 leading-relaxed mb-6">
-              Welcome to Infinity Crochet, where every stitch tells a story. We create beautiful, 
-              handmade crochet pieces that bring warmth, comfort, and joy to your life. From adorable 
-              amigurumi to functional bags and cozy home décor, each item is crafted with love and attention 
-              to detail.
-            </p>
-            <p className="text-lg text-gray-700 leading-relaxed">
-              Our passion is creating unique pieces that you'll treasure for years to come. Whether you're 
-              looking for the perfect gift or something special for yourself, we're here to bring your 
-              crochet dreams to life.
-            </p>
-          </div>
-          
-          {/* Visual Elements */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 items-start">
-            <div className="text-center">
-              <div className="mb-4 flex justify-center items-center h-24">
-                <img src="/images/quality-material.png" alt="Quality Materials" className="h-24 w-24 object-contain" />
-              </div>
-              <h3 className="font-semibold text-purple-dark mb-2">Quality Materials</h3>
-              <p className="text-sm text-gray-600">Premium, soft yarns</p>
-            </div>
-            <div className="text-center">
-              <div className="mb-4 flex justify-center items-center h-24">
-                <img src="/images/made-with-love.png" alt="Made with Love" className="h-24 w-24 object-contain" />
-              </div>
-              <h3 className="font-semibold text-purple-dark mb-2">Made with Love</h3>
-              <p className="text-sm text-gray-600">Handcrafted with care</p>
-            </div>
-            <div className="text-center">
-              <div className="mb-4 flex justify-center items-center h-24">
-                <img src="/images/unique-designs.png" alt="Unique Designs" className="h-24 w-24 object-contain" />
-              </div>
-              <h3 className="font-semibold text-purple-dark mb-2">Unique Designs</h3>
-              <p className="text-sm text-gray-600">One-of-a-kind creations</p>
-            </div>
-            <div className="text-center">
-              <div className="mb-4 flex justify-center items-center h-24">
-                <img src="/images/perfect-gifts.png" alt="Perfect Gifts" className="h-24 w-24 object-contain" />
-              </div>
-              <h3 className="font-semibold text-purple-dark mb-2">Perfect Gifts</h3>
-              <p className="text-sm text-gray-600">For all occasions</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Categories Section */}
       <section className="section-padding bg-gradient-to-br from-lilac-light to-white">
         <div className="container-custom">
@@ -193,10 +138,76 @@ export default function Home() {
             </div>
             
             <div className="mt-12">
-              <a href="mailto:contact@infinity-crochet.com" className="btn-secondary text-lg">
+              <a href="mailto:infinitycrochet1@gmail.com" className="btn-secondary text-lg">
                 Inquire About Training
               </a>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section id="about" className="section-padding bg-white">
+        <div className="container-custom">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-4xl md:text-5xl font-bold text-purple-dark mb-6 text-center">
+              About Infinity Crochet
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-lilac to-purple mx-auto mb-8"></div>
+            
+            <div className="relative">
+              <img 
+                src="/images/zeljka-about.jpg" 
+                alt="Željka with crochet snowmen" 
+                className="float-right ml-6 mb-6 w-48 md:w-64 rounded-soft shadow-lg object-cover"
+              />
+              <p className="text-lg text-gray-700 leading-relaxed mb-6">
+                I'm Zeljka, the hands and heart behind Infinity Crochet. My days are shaped by math, 
+                computer science, and dance—but crochet is where my creativity feels most at home. 
+                Every stitch is a little moment of joy, a quiet bit of magic, and a warm hug I send 
+                out into the world.
+              </p>
+              <p className="text-lg text-gray-700 leading-relaxed mb-12">
+                Everything in my shop is handmade by me, created with patience, intention, and a lot 
+                of heart. When you choose something from Infinity Crochet, you're receiving more than 
+                a product—you're receiving a small hug woven into yarn, created with love, care, and 
+                a touch of whimsy.
+              </p>
+            </div>
+          </div>
+          
+          {/* Visual Elements */}
+          <div className="max-w-4xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 items-start">
+            <div className="text-center">
+              <div className="mb-4 flex justify-center items-center h-24">
+                <img src="/images/quality-material.png" alt="Quality Materials" className="h-24 w-24 object-contain" />
+              </div>
+              <h3 className="font-semibold text-purple-dark mb-2">Quality Materials</h3>
+              <p className="text-sm text-gray-600">Premium, soft yarns</p>
+            </div>
+            <div className="text-center">
+              <div className="mb-4 flex justify-center items-center h-24">
+                <img src="/images/made-with-love.png" alt="Made with Love" className="h-24 w-24 object-contain" />
+              </div>
+              <h3 className="font-semibold text-purple-dark mb-2">Made with Love</h3>
+              <p className="text-sm text-gray-600">Handcrafted with care</p>
+            </div>
+            <div className="text-center">
+              <div className="mb-4 flex justify-center items-center h-24">
+                <img src="/images/unique-designs.png" alt="Unique Designs" className="h-24 w-24 object-contain" />
+              </div>
+              <h3 className="font-semibold text-purple-dark mb-2">Unique Designs</h3>
+              <p className="text-sm text-gray-600">One-of-a-kind creations</p>
+            </div>
+            <div className="text-center">
+              <div className="mb-4 flex justify-center items-center h-24">
+                <img src="/images/perfect-gifts.png" alt="Perfect Gifts" className="h-24 w-24 object-contain" />
+              </div>
+              <h3 className="font-semibold text-purple-dark mb-2">Perfect Gifts</h3>
+              <p className="text-sm text-gray-600">For all occasions</p>
+            </div>
+          </div>
           </div>
         </div>
       </section>

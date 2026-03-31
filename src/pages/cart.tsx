@@ -31,8 +31,6 @@ export default function CartPage() {
   }
 
   const subtotal = getCartTotal();
-  const shipping = subtotal > 50 ? 0 : 10; // Free shipping over $50
-  const estimatedTotal = subtotal + shipping;
 
   return (
     <>
@@ -78,17 +76,17 @@ export default function CartPage() {
                         <div className="mt-2 space-y-1">
                           {item.selectedColors.option1 && (
                             <p className="text-xs text-gray-600">
-                              Color 1: {item.selectedColors.option1}
+                              {item.product.colorOptions?.option1?.label || 'Color 1'}: {item.selectedColors.option1}
                             </p>
                           )}
                           {item.selectedColors.option2 && (
                             <p className="text-xs text-gray-600">
-                              Color 2: {item.selectedColors.option2}
+                              {item.product.colorOptions?.option2?.label || 'Color 2'}: {item.selectedColors.option2}
                             </p>
                           )}
                           {item.selectedColors.option3 && (
                             <p className="text-xs text-gray-600">
-                              Color 3: {item.selectedColors.option3}
+                              {item.product.colorOptions?.option3?.label || 'Color 3'}: {item.selectedColors.option3}
                             </p>
                           )}
                         </div>
@@ -98,7 +96,7 @@ export default function CartPage() {
                       <div className="flex items-center gap-4 mt-4">
                         <div className="flex items-center border border-gray-300 rounded-lg">
                           <button
-                            onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                            onClick={() => updateQuantity(item.product.id, item.quantity - 1, item.selectedColors)}
                             className="px-3 py-1 hover:bg-gray-100 transition-colors"
                           >
                             −
@@ -107,7 +105,7 @@ export default function CartPage() {
                             {item.quantity}
                           </span>
                           <button
-                            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                            onClick={() => updateQuantity(item.product.id, item.quantity + 1, item.selectedColors)}
                             className="px-3 py-1 hover:bg-gray-100 transition-colors"
                           >
                             +
@@ -115,7 +113,7 @@ export default function CartPage() {
                         </div>
 
                         <button
-                          onClick={() => removeFromCart(item.product.id)}
+                          onClick={() => removeFromCart(item.product.id, item.selectedColors)}
                           className="text-red-600 hover:text-red-800 text-sm"
                         >
                           Remove
@@ -153,26 +151,14 @@ export default function CartPage() {
                   </div>
                   <div className="flex justify-between text-gray-700">
                     <span>Shipping</span>
-                    <span>{shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}</span>
+                    <span className="text-sm">Calculated at checkout</span>
                   </div>
-                  {shipping === 0 && (
-                    <p className="text-xs text-green-600">🎉 You qualify for free shipping!</p>
-                  )}
-                  {shipping > 0 && subtotal > 0 && subtotal < 50 && (
-                    <p className="text-xs text-gray-600">
-                      Add ${(50 - subtotal).toFixed(2)} more for free shipping
-                    </p>
-                  )}
                   <div className="flex justify-between text-gray-700">
                     <span>Tax</span>
-                    <span className="text-sm">At checkout</span>
-                  </div>
-                  <div className="border-t border-gray-300 pt-3 flex justify-between text-xl font-bold text-purple-dark">
-                    <span>Estimated Total</span>
-                    <span>${estimatedTotal.toFixed(2)}</span>
+                    <span className="text-sm">Calculated at checkout</span>
                   </div>
                   <p className="text-xs text-gray-500 text-center mt-2">
-                    Tax calculated at checkout
+                    Final shipping cost based on your address
                   </p>
                 </div>
 
@@ -191,7 +177,7 @@ export default function CartPage() {
                   </div>
                   <div className="flex items-start gap-2">
                     <span className="text-purple">✓</span>
-                    <span>Free shipping on orders over $50</span>
+                    <span>Real-time shipping rates</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <span className="text-purple">✓</span>

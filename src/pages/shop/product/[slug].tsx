@@ -20,6 +20,7 @@ export default function ProductPage() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [colorError, setColorError] = useState<string>('');
   const [selectedColors, setSelectedColors] = useState<{
     option1?: string;
     option2?: string;
@@ -310,7 +311,7 @@ export default function ProductPage() {
                                     className={`w-10 h-10 rounded-full border-2 transition-all ${
                                       isSelected ? 'border-purple scale-110' : 'border-gray-300 group-hover:border-purple group-hover:scale-105'
                                     }`}
-                                    style={{ backgroundColor: colorObj.hex }}
+                                    style={colorObj.hex.startsWith('linear-gradient') ? { background: colorObj.hex } : { backgroundColor: colorObj.hex }}
                                   />
                                   <span className="text-xs text-gray-600 text-center leading-tight max-w-[60px]">
                                     {colorObj.name}
@@ -350,7 +351,7 @@ export default function ProductPage() {
                                     className={`w-10 h-10 rounded-full border-2 transition-all ${
                                       isSelected ? 'border-purple scale-110' : 'border-gray-300 group-hover:border-purple group-hover:scale-105'
                                     }`}
-                                    style={{ backgroundColor: colorObj.hex }}
+                                    style={colorObj.hex.startsWith('linear-gradient') ? { background: colorObj.hex } : { backgroundColor: colorObj.hex }}
                                   />
                                   <span className="text-xs text-gray-600 text-center leading-tight max-w-[60px]">
                                     {colorObj.name}
@@ -390,7 +391,7 @@ export default function ProductPage() {
                                     className={`w-10 h-10 rounded-full border-2 transition-all ${
                                       isSelected ? 'border-purple scale-110' : 'border-gray-300 group-hover:border-purple group-hover:scale-105'
                                     }`}
-                                    style={{ backgroundColor: colorObj.hex }}
+                                    style={colorObj.hex.startsWith('linear-gradient') ? { background: colorObj.hex } : { backgroundColor: colorObj.hex }}
                                   />
                                   <span className="text-xs text-gray-600 text-center leading-tight max-w-[60px]">
                                     {colorObj.name}
@@ -475,7 +476,30 @@ export default function ProductPage() {
                   <div className="flex flex-col sm:flex-row gap-4">
                     <button
                       onClick={() => {
+                        // Validate color selections if product has color options
+                        if (product.colorOptions) {
+                          const missingColors: string[] = [];
+                          
+                          if (product.colorOptions.option1?.enabled && !selectedColors.option1) {
+                            missingColors.push(product.colorOptions.option1.label);
+                          }
+                          if (product.colorOptions.option2?.enabled && !selectedColors.option2) {
+                            missingColors.push(product.colorOptions.option2.label);
+                          }
+                          if (product.colorOptions.option3?.enabled && !selectedColors.option3) {
+                            missingColors.push(product.colorOptions.option3.label);
+                          }
+                          
+                          if (missingColors.length > 0) {
+                            setColorError(`Please select: ${missingColors.join(', ')}`);
+                            setTimeout(() => setColorError(''), 4000);
+                            return;
+                          }
+                        }
+                        
+                        // Add to cart if validation passes
                         addToCart(product, quantity, selectedColors);
+                        setColorError('');
                         setAddedToCart(true);
                         setTimeout(() => setAddedToCart(false), 2000);
                       }}
@@ -493,6 +517,15 @@ export default function ProductPage() {
                       View Cart
                     </Link>
                   </div>
+
+                  {/* Color Selection Error */}
+                  {colorError && (
+                    <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-sm text-red-700 text-center">
+                        {colorError}
+                      </p>
+                    </div>
+                  )}
 
                   <p className="text-sm text-gray-600 mt-4 text-center">
                     Or{' '}
@@ -516,7 +549,7 @@ export default function ProductPage() {
                           body += `\n\nColor preferences:\n${colorSelections.join('\n')}`;
                         }
                         
-                        return `mailto:contact@infinity-crochet.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                        return `mailto:infinitycrochet1@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
                       })()}
                       className="text-purple hover:text-purple-dark underline"
                     >

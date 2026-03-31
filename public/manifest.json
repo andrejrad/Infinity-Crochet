@@ -1,0 +1,17 @@
+{
+  "name": "Infinity Crochet",
+  "short_name": "Infinity Crochet",
+  "description": "Handmade crochet creations - unique, custom designs",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5EFE7",
+  "theme_color": "#8B5A9F",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

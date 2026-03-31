@@ -31,6 +31,8 @@ export default function OrderHistory() {
 
     try {
       const ordersRef = collection(db, 'orders');
+      
+      // Query for user's orders
       const q = query(
         ordersRef,
         where('userId', '==', user.uid),
@@ -46,6 +48,11 @@ export default function OrderHistory() {
       setOrders(ordersData);
     } catch (error) {
       console.error('Error fetching orders:', error);
+      
+      // If the composite index is not ready, show a helpful error
+      if (error instanceof Error && error.message.includes('index')) {
+        console.error('Firebase composite index is still building. Please wait a few minutes and refresh.');
+      }
     } finally {
       setLoading(false);
     }
@@ -161,9 +168,9 @@ export default function OrderHistory() {
                             </p>
                           </div>
                           <div>
-                            <p className="text-sm text-gray-500">Order ID</p>
-                            <p className="font-medium text-gray-900 font-mono text-xs">
-                              {order.id?.substring(0, 12)}...
+                            <p className="text-sm text-gray-500">Order Number</p>
+                            <p className="font-medium text-gray-900 font-mono text-sm">
+                              {order.orderNumber || `#${order.id?.substring(0, 12)}`}
                             </p>
                           </div>
                         </div>

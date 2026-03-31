@@ -30,7 +30,7 @@ Follow these steps to complete your Infinity Crochet website setup:
 ## 📝 Update Content
 
 ### Contact Information
-- [ ] Replace `contact@infinity-crochet.com` with your actual email in:
+- [ ] Replace `infinitycrochet1@gmail.com` with your actual email in:
   - `/src/components/Footer.tsx`
   - `/src/pages/index.tsx`
   - `/src/pages/shop/product/[slug].tsx`

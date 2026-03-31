@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
@@ -6,13 +6,21 @@ import SEO from '@/components/SEO';
 
 export default function SignupPage() {
   const router = useRouter();
-  const { signUp } = useAuth();
+  const { signUp, user, loading: authLoading } = useAuth();
   const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (!authLoading && user) {
+      const redirect = router.query.redirect as string;
+      router.push(redirect || '/account');
+    }
+  }, [user, authLoading, router]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -32,10 +40,9 @@ export default function SignupPage() {
 
     try {
       await signUp(email, password, displayName);
-      router.push('/account');
+      // Navigation will happen via the useEffect above after user state updates
     } catch (err: any) {
       setError(err.message || 'Failed to create account');
-    } finally {
       setLoading(false);
     }
   };
@@ -139,7 +146,10 @@ export default function SignupPage() {
               <div className="mt-6 text-center">
                 <p className="text-gray-600">
                   Already have an account?{' '}
-                  <Link href="/login" className="text-purple font-medium hover:text-purple-dark">
+                  <Link 
+                    href={router.query.redirect ? `/login?redirect=${encodeURIComponent(router.query.redirect as string)}` : '/login'} 
+                    className="text-purple font-medium hover:text-purple-dark"
+                  >
                     Sign in
                   </Link>
                 </p>

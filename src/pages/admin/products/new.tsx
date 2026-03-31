@@ -352,6 +352,104 @@ export default function NewProductPage() {
               </div>
 
               <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Customer Color Customization (optional)
+                </label>
+                <p className="text-xs text-gray-600 mb-4">
+                  Allow customers to choose colors for different parts of this product. Enable up to 3 color options.
+                </p>
+                
+                <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
+                  {/* Color Option 1 */}
+                  <div className="space-y-3">
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={formData.colorOption1Enabled}
+                        onChange={(e) => setFormData({ ...formData, colorOption1Enabled: e.target.checked })}
+                        className="mr-2 w-4 h-4 text-purple border-gray-300 rounded focus:ring-2 focus:ring-purple"
+                      />
+                      <span className="text-sm text-gray-700">Color Option 1</span>
+                    </label>
+                    {formData.colorOption1Enabled && (
+                      <div className="space-y-3">
+                        <input
+                          type="text"
+                          value={formData.colorOption1Label}
+                          onChange={(e) => setFormData({ ...formData, colorOption1Label: e.target.value })}
+                          placeholder="e.g., Flower color, Body color"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple focus:border-transparent text-sm"
+                        />
+                        <ColorMultiSelect
+                          selectedColors={colorOption1Colors}
+                          onChange={setColorOption1Colors}
+                          label="Available colors for this option"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Color Option 2 */}
+                  <div className="space-y-3">
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={formData.colorOption2Enabled}
+                        onChange={(e) => setFormData({ ...formData, colorOption2Enabled: e.target.checked })}
+                        className="mr-2 w-4 h-4 text-purple border-gray-300 rounded focus:ring-2 focus:ring-purple"
+                      />
+                      <span className="text-sm text-gray-700">Color Option 2</span>
+                    </label>
+                    {formData.colorOption2Enabled && (
+                      <div className="space-y-3">
+                        <input
+                          type="text"
+                          value={formData.colorOption2Label}
+                          onChange={(e) => setFormData({ ...formData, colorOption2Label: e.target.value })}
+                          placeholder="e.g., Leaf color, Tail color"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple focus:border-transparent text-sm"
+                        />
+                        <ColorMultiSelect
+                          selectedColors={colorOption2Colors}
+                          onChange={setColorOption2Colors}
+                          label="Available colors for this option"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Color Option 3 */}
+                  <div className="space-y-3">
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={formData.colorOption3Enabled}
+                        onChange={(e) => setFormData({ ...formData, colorOption3Enabled: e.target.checked })}
+                        className="mr-2 w-4 h-4 text-purple border-gray-300 rounded focus:ring-2 focus:ring-purple"
+                      />
+                      <span className="text-sm text-gray-700">Color Option 3</span>
+                    </label>
+                    {formData.colorOption3Enabled && (
+                      <div className="space-y-3">
+                        <input
+                          type="text"
+                          value={formData.colorOption3Label}
+                          onChange={(e) => setFormData({ ...formData, colorOption3Label: e.target.value })}
+                          placeholder="e.g., Head color, Eye color"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple focus:border-transparent text-sm"
+                        />
+                        <ColorMultiSelect
+                          selectedColors={colorOption3Colors}
+                          onChange={setColorOption3Colors}
+                          label="Available colors for this option"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Product Dimensions (optional)
                 </label>
@@ -462,116 +560,6 @@ export default function NewProductPage() {
                       />
                       <span className="text-sm text-gray-700">lbs</span>
                     </label>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Customer Color Customization (optional)
-                </label>
-                <p className="text-xs text-gray-600 mb-4">
-                  Allow customers to choose colors for different parts of this product. Enable up to 3 color options.
-                </p>
-                
-                <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
-                  {/* Color Option 1 */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-4">
-                      <label className="flex items-center min-w-[120px]">
-                        <input
-                          type="checkbox"
-                          checked={formData.colorOption1Enabled}
-                          onChange={(e) => setFormData({ ...formData, colorOption1Enabled: e.target.checked })}
-                          className="mr-2 w-4 h-4 text-purple border-gray-300 rounded focus:ring-2 focus:ring-purple"
-                        />
-                        <span className="text-sm text-gray-700">Color Option 1</span>
-                      </label>
-                      {formData.colorOption1Enabled && (
-                        <input
-                          type="text"
-                          value={formData.colorOption1Label}
-                          onChange={(e) => setFormData({ ...formData, colorOption1Label: e.target.value })}
-                          placeholder="e.g., Flower color, Body color"
-                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple focus:border-transparent text-sm"
-                        />
-                      )}
-                    </div>
-                    {formData.colorOption1Enabled && (
-                      <div className="ml-[136px]">
-                        <ColorMultiSelect
-                          selectedColors={colorOption1Colors}
-                          onChange={setColorOption1Colors}
-                          label="Available colors for this option"
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Color Option 2 */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-4">
-                      <label className="flex items-center min-w-[120px]">
-                        <input
-                          type="checkbox"
-                          checked={formData.colorOption2Enabled}
-                          onChange={(e) => setFormData({ ...formData, colorOption2Enabled: e.target.checked })}
-                          className="mr-2 w-4 h-4 text-purple border-gray-300 rounded focus:ring-2 focus:ring-purple"
-                        />
-                        <span className="text-sm text-gray-700">Color Option 2</span>
-                      </label>
-                      {formData.colorOption2Enabled && (
-                        <input
-                          type="text"
-                          value={formData.colorOption2Label}
-                          onChange={(e) => setFormData({ ...formData, colorOption2Label: e.target.value })}
-                          placeholder="e.g., Leaf color, Tail color"
-                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple focus:border-transparent text-sm"
-                        />
-                      )}
-                    </div>
-                    {formData.colorOption2Enabled && (
-                      <div className="ml-[136px]">
-                        <ColorMultiSelect
-                          selectedColors={colorOption2Colors}
-                          onChange={setColorOption2Colors}
-                          label="Available colors for this option"
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Color Option 3 */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-4">
-                      <label className="flex items-center min-w-[120px]">
-                        <input
-                          type="checkbox"
-                          checked={formData.colorOption3Enabled}
-                          onChange={(e) => setFormData({ ...formData, colorOption3Enabled: e.target.checked })}
-                          className="mr-2 w-4 h-4 text-purple border-gray-300 rounded focus:ring-2 focus:ring-purple"
-                        />
-                        <span className="text-sm text-gray-700">Color Option 3</span>
-                      </label>
-                      {formData.colorOption3Enabled && (
-                        <input
-                          type="text"
-                          value={formData.colorOption3Label}
-                          onChange={(e) => setFormData({ ...formData, colorOption3Label: e.target.value })}
-                          placeholder="e.g., Head color, Eye color"
-                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple focus:border-transparent text-sm"
-                        />
-                      )}
-                    </div>
-                    {formData.colorOption3Enabled && (
-                      <div className="ml-[136px]">
-                        <ColorMultiSelect
-                          selectedColors={colorOption3Colors}
-                          onChange={setColorOption3Colors}
-                          label="Available colors for this option"
-                        />
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>

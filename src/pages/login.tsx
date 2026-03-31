@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
@@ -6,11 +6,19 @@ import SEO from '@/components/SEO';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { signIn } = useAuth();
+  const { signIn, user, loading: authLoading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (!authLoading && user) {
+      const redirect = router.query.redirect as string;
+      router.push(redirect || '/account');
+    }
+  }, [user, authLoading, router]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -19,10 +27,9 @@ export default function LoginPage() {
 
     try {
       await signIn(email, password);
-      router.push('/account');
+      // Navigation will happen via the useEffect above after user state updates
     } catch (err: any) {
       setError(err.message || 'Failed to sign in');
-    } finally {
       setLoading(false);
     }
   };
@@ -94,7 +101,10 @@ export default function LoginPage() {
               <div className="mt-6 text-center">
                 <p className="text-gray-600">
                   Don't have an account?{' '}
-                  <Link href="/signup" className="text-purple font-medium hover:text-purple-dark">
+                  <Link 
+                    href={router.query.redirect ? `/signup?redirect=${encodeURIComponent(router.query.redirect as string)}` : '/signup'} 
+                    className="text-purple font-medium hover:text-purple-dark"
+                  >
                     Sign up
                   </Link>
                 </p>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 814 763" fill="none">
+  <rect width="814" height="763" fill="#F5EFE7"/>
+  <g transform="translate(0, 150)">
+    <!-- Infinity loop made of yarn -->
+    <path d="M140 200 Q140 120 200 120 Q240 120 270 150 Q300 180 330 200 Q360 220 390 200 Q420 180 450 150 Q480 120 520 120 Q580 120 580 200 Q580 280 520 280 Q480 280 450 250 Q420 220 390 200 Q360 180 330 200 Q300 220 270 250 Q240 280 200 280 Q140 280 140 200 Z" 
+          fill="#C8A2D0" stroke="#8B5A9F" stroke-width="8"/>
+    <!-- Inner shading for yarn ball -->
+    <circle cx="230" cy="200" r="70" fill="#B88FC7" stroke="#8B5A9F" stroke-width="6"/>
+    <!-- Yarn texture lines -->
+    <path d="M180 200 Q205 180 230 200 Q255 220 280 200" stroke="#9B7DAE" stroke-width="3" fill="none"/>
+    <path d="M180 220 Q205 200 230 220 Q255 240 280 220" stroke="#9B7DAE" stroke-width="3" fill="none"/>
+    <path d="M180 180 Q205 160 230 180 Q255 200 280 180" stroke="#9B7DAE" stroke-width="3" fill="none"/>
+    <!-- Yarn end -->
+    <path d="M10 330 Q20 340 30 330" stroke="#8B5A9F" stroke-width="8" stroke-linecap="round" fill="none"/>
+  </g>
+  <!-- Crochet hook -->
+  <g transform="translate(130, 480)">
+    <ellipse cx="270" cy="50" rx="160" ry="25" fill="#B88FC7" stroke="#8B5A9F" stroke-width="6"/>
+    <path d="M430 50 Q500 50 540 55" stroke="#8B5A9F" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <path d="M540 50 Q570 45 580 35 Q585 30 585 25 Q585 15 575 10 Q565 5 555 10" stroke="#8B5A9F" stroke-width="6" fill="none"/>
+  </g>
+</svg>

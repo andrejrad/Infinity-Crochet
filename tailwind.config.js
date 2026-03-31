@@ -20,7 +20,6 @@ module.exports = {
         },
       },
       fontFamily: {
-        serif: ['Playfair Display', 'serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
