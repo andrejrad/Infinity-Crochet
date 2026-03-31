@@ -112,8 +112,16 @@ export default async function handler(
       console.log('User tracking:', {
         client_reference_id: session.client_reference_id,
         userId: session.client_reference_id || 'guest',
-        customerEmail: session.customer_email,
+        customerEmail: session.customer_details?.email,
+        customerEmailFallback: session.customer_email,
       });
+      
+      // Get email from customer_details (newer API) or customer_email (older sessions)
+      const customerEmail = session.customer_details?.email || session.customer_email || '';
+      
+      if (!customerEmail) {
+        console.error('⚠️ No customer email found in session. Email notifications will not be sent.');
+      }
       
       // Use address from metadata (already validated by Shippo when getting rates)
       const order = {
@@ -121,7 +129,7 @@ export default async function handler(
         stripeSessionId: session.id,
         userId: session.client_reference_id || 'guest',
         customerName: session.metadata?.customerName || '',
-        email: session.customer_email || '',
+        email: customerEmail,
         phone: session.metadata?.phone || '',
         shippingAddress: {
           line1: session.metadata?.addressLine1 || '',
