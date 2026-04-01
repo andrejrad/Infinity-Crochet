@@ -42,7 +42,8 @@ export default function Checkout() {
   // Calculate totals
   const subtotal = getCartTotal();
   const shippingCost = selectedRate ? selectedRate.amount : 0;
-  const estimatedTotal = subtotal + shippingCost;
+  const insuranceCost = insurance.enabled ? insurance.cost : 0;
+  const estimatedTotal = subtotal + shippingCost + insuranceCost;
 
   // Fetch shipping rates when address is complete
   const fetchShippingRates = async () => {
