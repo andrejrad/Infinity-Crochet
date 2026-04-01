@@ -64,6 +64,7 @@ function generateCustomerOrderEmail(order: any): string {
     <body>
       <div class="container">
         <div class="header">
+          <img src="https://infinity-crochet.com/images/logo.jpg" alt="Infinity Crochet" style="max-width: 200px; margin-bottom: 20px;" />
           <h1 style="margin: 0;">🎉 Order Confirmed!</h1>
           <p style="margin: 10px 0 0 0;">Thank you for shopping with Infinity Crochet</p>
         </div>
@@ -182,8 +183,7 @@ function generateAdminOrderEmail(order: any): string {
     </head>
     <body>
       <div class="container">
-        <div class="header">
-          <h1 style="margin: 0;">🔔 New Order Received!</h1>
+        <div class="header">          <img src="https://infinity-crochet.com/images/logo.jpg" alt="Infinity Crochet" style="max-width: 200px; margin-bottom: 20px;" />          <h1 style="margin: 0;">🔔 New Order Received!</h1>
           <p style="margin: 10px 0 0 0;">Infinity Crochet Admin Notification</p>
         </div>
         
@@ -396,6 +396,7 @@ function generateStatusChangeEmail(order: any, oldStatus: string): string {
     <body>
       <div class="container">
         <div class="header">
+          <img src="https://infinity-crochet.com/images/logo.jpg" alt="Infinity Crochet" style="max-width: 200px; margin-bottom: 20px;" />
           <h1 style="margin: 0;">${statusEmoji} Order Status Update</h1>
           <p style="margin: 10px 0 0 0;">${statusMessage}</p>
         </div>
