@@ -13,6 +13,10 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [refundAccepted, setRefundAccepted] = useState(false);
+  const [shipmentAccepted, setShipmentAccepted] = useState(false);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -134,9 +138,79 @@ export default function SignupPage() {
                   />
                 </div>
 
+                <div className="space-y-3 pt-2">
+                  <p className="text-sm font-medium text-gray-700 mb-3">
+                    Please read and accept the following policies:
+                  </p>
+                  
+                  <div className="flex items-start">
+                    <input
+                      id="privacyPolicy"
+                      type="checkbox"
+                      checked={privacyAccepted}
+                      onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                      className="mt-1 h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                    />
+                    <label htmlFor="privacyPolicy" className="ml-2 text-sm text-gray-600">
+                      I have read and accept the{' '}
+                      <Link href="/privacy-policy" target="_blank" className="text-purple-600 hover:text-purple-800 underline">
+                        Privacy Policy
+                      </Link>
+                    </label>
+                  </div>
+
+                  <div className="flex items-start">
+                    <input
+                      id="termsOfUse"
+                      type="checkbox"
+                      checked={termsAccepted}
+                      onChange={(e) => setTermsAccepted(e.target.checked)}
+                      className="mt-1 h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                    />
+                    <label htmlFor="termsOfUse" className="ml-2 text-sm text-gray-600">
+                      I have read and accept the{' '}
+                      <Link href="/terms-of-use" target="_blank" className="text-purple-600 hover:text-purple-800 underline">
+                        Terms of Use
+                      </Link>
+                    </label>
+                  </div>
+
+                  <div className="flex items-start">
+                    <input
+                      id="refundPolicy"
+                      type="checkbox"
+                      checked={refundAccepted}
+                      onChange={(e) => setRefundAccepted(e.target.checked)}
+                      className="mt-1 h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                    />
+                    <label htmlFor="refundPolicy" className="ml-2 text-sm text-gray-600">
+                      I have read and accept the{' '}
+                      <Link href="/refund-policy" target="_blank" className="text-purple-600 hover:text-purple-800 underline">
+                        Refund & Cancelation Policy
+                      </Link>
+                    </label>
+                  </div>
+
+                  <div className="flex items-start">
+                    <input
+                      id="shipmentPolicy"
+                      type="checkbox"
+                      checked={shipmentAccepted}
+                      onChange={(e) => setShipmentAccepted(e.target.checked)}
+                      className="mt-1 h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                    />
+                    <label htmlFor="shipmentPolicy" className="ml-2 text-sm text-gray-600">
+                      I have read and accept the{' '}
+                      <Link href="/shipment-policy" target="_blank" className="text-purple-600 hover:text-purple-800 underline">
+                        Shipment Policy
+                      </Link>
+                    </label>
+                  </div>
+                </div>
+
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !privacyAccepted || !termsAccepted || !refundAccepted || !shipmentAccepted}
                   className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? 'Creating account...' : 'Create Account'}
