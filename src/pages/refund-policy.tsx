@@ -25,8 +25,7 @@ export default function RefundPolicy() {
               <section>
                 <h2 className="text-2xl font-semibold text-purple-dark mb-4">Overview</h2>
                 <p>
-                  At Infinity Crochet, we want you to be completely satisfied with your purchase. This policy outlines our 
-                  refund and cancelation procedures. Please read carefully before placing your order.
+                  This policy outlines the refund and cancelation procedures for Infinity Crochet. Please read carefully before placing an order.
                 </p>
               </section>
 
@@ -36,25 +35,52 @@ export default function RefundPolicy() {
                 <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-4">
                   <h3 className="text-lg font-semibold text-green-800 mb-2">✓ Cancelation Window</h3>
                   <p className="text-green-700">
-                    You can cancel your order and receive a <strong>full refund</strong> at any time 
-                    <strong> before the item has been shipped</strong>.
+                    Orders can be canceled for a <strong>full refund within 1 hour</strong> of placing the order.
                   </p>
                 </div>
 
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">How to Cancel</h3>
-                <p className="mb-4">To cancel your order:</p>
+                <p className="mb-4">To cancel an order:</p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Contact us immediately at <a href="mailto:infinitycrochet1@gmail.com" className="text-purple-600 hover:underline">infinitycrochet1@gmail.com</a></li>
-                  <li>Include your order number in the subject line</li>
-                  <li>We will process your cancelation request within 24 hours</li>
+                  <li>Contact Infinity Crochet immediately at <a href="mailto:infinitycrochet1@gmail.com" className="text-purple-600 hover:underline">infinitycrochet1@gmail.com</a></li>
+                  <li>Include the order number in the subject line</li>
+                  <li>Cancelation requests will be processed within 24 hours</li>
                 </ul>
 
                 <div className="bg-amber-50 border-l-4 border-amber-500 p-4 mt-4">
-                  <h3 className="text-lg font-semibold text-amber-800 mb-2">⚠️ After Shipping</h3>
+                  <h3 className="text-lg font-semibold text-amber-800 mb-2">⚠️ After 1 Hour</h3>
                   <p className="text-amber-700">
-                    Once an order has been shipped, it cannot be canceled. Please refer to our return policy below.
+                    Once an order is older than 1 hour, it cannot be canceled. Please refer to the return policy below.
                   </p>
                 </div>
+              </section>
+
+              <section>
+                <h2 className="text-2xl font-semibold text-purple-dark mb-4">Returns</h2>
+                
+                <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
+                  <h3 className="text-lg font-semibold text-blue-800 mb-2">📦 Return Window</h3>
+                  <p className="text-blue-700">
+                    Returns are accepted <strong>within 7 days of delivery</strong> for a refund excluding shipping costs.
+                  </p>
+                </div>
+
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Return Process</h3>
+                <ol className="list-decimal pl-6 space-y-2 mb-4">
+                  <li>Contact Infinity Crochet at <a href="mailto:infinitycrochet1@gmail.com" className="text-purple-600 hover:underline">infinitycrochet1@gmail.com</a> within 7 days of delivery</li>
+                  <li>Include order number and reason for return</li>
+                  <li>Ship the product back to Infinity Crochet (customer is responsible for return shipping costs)</li>
+                  <li>Refund will be issued upon receipt and inspection of the returned item</li>
+                </ol>
+
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Return Requirements</h3>
+                <ul className="list-disc pl-6 space-y-2">
+                  <li>Item must be in original condition</li>
+                  <li>Item must be unused and with all tags attached</li>
+                  <li>Original packaging should be included when possible</li>
+                  <li>Customer is responsible for return shipping costs</li>
+                  <li>Customer is responsible for the item until Infinity Crochet receives it</li>
+                </ul>
               </section>
 
               <section>
@@ -62,7 +88,8 @@ export default function RefundPolicy() {
                 
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">Full Refunds Available For:</h3>
                 <ul className="list-disc pl-6 space-y-2 mb-4">
-                  <li><strong>Order Cancelation:</strong> Items canceled before shipping</li>
+                  <li><strong>Order Cancelation:</strong> Within 1 hour of placing order (includes all costs)</li>
+                  <li><strong>Returns:</strong> Within 7 days of delivery (excludes original shipping costs)</li>
                   <li><strong>Defective Items:</strong> Products with manufacturing defects</li>
                   <li><strong>Incorrect Items:</strong> Wrong product received</li>
                   <li><strong>Damaged During Shipping:</strong> Items damaged in transit (with photo evidence)</li>
@@ -71,31 +98,19 @@ export default function RefundPolicy() {
 
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">Refunds NOT Available For:</h3>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Change of mind after item has shipped</li>
+                  <li><strong>Custom Orders:</strong> Custom-made items are not eligible for refund or return</li>
+                  <li>Orders older than 1 hour (must use return process instead)</li>
+                  <li>Returns requested after 7 days of delivery</li>
                   <li>Minor color variations due to handmade nature or screen settings</li>
                   <li>Small size variations inherent to handmade items</li>
-                  <li>Custom orders (unless defective)</li>
                   <li>Items damaged due to improper care or use</li>
                 </ul>
               </section>
 
               <section>
-                <h2 className="text-2xl font-semibold text-purple-dark mb-4">Return Process</h2>
-                <p className="mb-4">
-                  If you received a defective or incorrect item, please contact us within <strong>7 days</strong> of delivery:
-                </p>
-                <ol className="list-decimal pl-6 space-y-2">
-                  <li>Email us at <a href="mailto:infinitycrochet1@gmail.com" className="text-purple-600 hover:underline">infinitycrochet1@gmail.com</a></li>
-                  <li>Include your order number and clear photos of the issue</li>
-                  <li>Describe the problem in detail</li>
-                  <li>Wait for our return authorization before shipping items back</li>
-                </ol>
-              </section>
-
-              <section>
                 <h2 className="text-2xl font-semibold text-purple-dark mb-4">Refund Processing</h2>
                 
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">What's Included in Refunds:</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Cancelations (Within 1 Hour):</h3>
                 <ul className="list-disc pl-6 space-y-2 mb-4">
                   <li>Full purchase price of the item(s)</li>
                   <li>Original shipping costs</li>
@@ -103,78 +118,73 @@ export default function RefundPolicy() {
                   <li>Insurance costs (if purchased)</li>
                 </ul>
 
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Returns (Within 7 Days):</h3>
+                <ul className="list-disc pl-6 space-y-2 mb-4">
+                  <li>Purchase price of the item(s)</li>
+                  <li>Taxes paid on items</li>
+                  <li><strong>Excludes:</strong> Original shipping costs and return shipping costs</li>
+                </ul>
+
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">Refund Timeline:</h3>
                 <ul className="list-disc pl-6 space-y-2">
                   <li><strong>Cancelations:</strong> Processed immediately, funds returned within 5-10 business days</li>
-                  <li><strong>Returns:</strong> Processed within 2 business days of receiving returned item</li>
-                  <li><strong>Bank Processing:</strong> Additional 5-10 business days for funds to appear in your account</li>
+                  <li><strong>Returns:</strong> Processed within 2 business days of receiving and inspecting returned item</li>
+                  <li><strong>Bank Processing:</strong> Additional 5-10 business days for funds to appear in account</li>
                 </ul>
 
                 <h3 className="text-xl font-semibold text-gray-900 mb-2 mt-4">Refund Method:</h3>
                 <p>
-                  All refunds are issued to the original payment method used for the purchase. We cannot issue refunds 
+                  All refunds are issued to the original payment method used for the purchase. Refunds cannot be issued 
                   to different payment methods or as store credit unless mutually agreed upon.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-2xl font-semibold text-purple-dark mb-4">Return Shipping</h2>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li><strong>Defective/Incorrect Items:</strong> We provide a prepaid return shipping label</li>
-                  <li><strong>Change of Mind (if accepted):</strong> Customer responsible for return shipping costs</li>
-                  <li>Items must be returned in original condition with tags attached</li>
-                  <li>Customer is responsible for item until we receive it</li>
-                </ul>
-              </section>
-
-              <section>
-                <h2 className="text-2xl font-semibold text-purple-dark mb-4">Exchanges</h2>
-                <p>
-                  We do not offer direct exchanges. If you need a different size, color, or product:
-                </p>
-                <ol className="list-decimal pl-6 space-y-2 mt-2">
-                  <li>Cancel your original order (before shipping) or request a return</li>
-                  <li>Receive your refund</li>
-                  <li>Place a new order for the desired item</li>
-                </ol>
-              </section>
-
-              <section>
                 <h2 className="text-2xl font-semibold text-purple-dark mb-4">Custom Orders</h2>
+                
+                <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
+                  <h3 className="text-lg font-semibold text-red-800 mb-2">⚠️ No Refunds on Custom Orders</h3>
+                  <p className="text-red-700">
+                    Custom-made items are <strong>not eligible for refund or return</strong> under any circumstances. 
+                    This includes items made to specific measurements, colors, or design specifications requested by the customer.
+                  </p>
+                </div>
+                
                 <p>
-                  Custom-made items cannot be canceled once production has begun. However, if a custom item arrives 
-                  defective or does not match the agreed-upon specifications, we will offer a full refund or remake 
-                  the item at no additional cost.
+                  Please review custom order details carefully before placing the order. Infinity Crochet invests 
+                  significant time and materials into creating custom pieces specifically for each customer.
                 </p>
               </section>
 
               <section>
                 <h2 className="text-2xl font-semibold text-purple-dark mb-4">Damaged During Shipping</h2>
-                <p className="mb-4">
-                  If your item arrives damaged:
-                </p>
-                <ul className="list-disc pl-6 space-y-2">
+                
+                <div className="bg-purple-50 border-l-4 border-purple-500 p-4 mb-4">
+                  <h3 className="text-lg font-semibold text-purple-800 mb-2">📸 Important: Document Damage</h3>
+                  <p className="text-purple-700">
+                    If an item arrives damaged, take photos immediately and contact Infinity Crochet within 48 hours.
+                  </p>
+                </div>
+
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Steps for Damaged Items:</h3>
+                <ol className="list-decimal pl-6 space-y-2">
                   <li>Take photos of the damaged item and packaging immediately</li>
-                  <li>Contact us within 48 hours of delivery</li>
+                  <li>Contact Infinity Crochet at <a href="mailto:infinitycrochet1@gmail.com" className="text-purple-600 hover:underline">infinitycrochet1@gmail.com</a> within 48 hours of delivery</li>
                   <li>Do not discard the packaging</li>
-                  <li>We will file a claim with the carrier and issue a full refund or replacement</li>
-                </ul>
-                <p className="mt-4 text-sm italic">
-                  Note: If you purchased shipping insurance through our checkout, claims are processed faster.
+                  <li>A claim will be filed with the carrier and a full refund or replacement will be issued</li>
+                </ol>
+                <p className="mt-4 text-sm text-gray-600">
+                  Note: If shipping insurance was purchased through checkout, claims are processed faster.
                 </p>
               </section>
 
               <section>
                 <h2 className="text-2xl font-semibold text-purple-dark mb-4">Questions or Concerns</h2>
+                <p className="mb-4">
+                  For questions about the Refund & Cancelation Policy or assistance with an order, contact Infinity Crochet:
+                </p>
                 <p>
-                  If you have any questions about our Refund & Cancelation Policy or need assistance with an order, 
-                  please don't hesitate to contact us:
-                </p>
-                <p className="mt-2">
                   <strong>Email:</strong> <a href="mailto:infinitycrochet1@gmail.com" className="text-purple-600 hover:underline">infinitycrochet1@gmail.com</a>
-                </p>
-                <p className="mt-4 text-sm text-gray-600">
-                  We're here to ensure you have a positive experience with Infinity Crochet!
                 </p>
               </section>
             </div>

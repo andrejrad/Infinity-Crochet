@@ -25,42 +25,42 @@ export default function TermsOfUse() {
               <section>
                 <h2 className="text-2xl font-semibold text-purple-dark mb-4">Acceptance of Terms</h2>
                 <p>
-                  By accessing and using infinity-crochet.com ("Website"), you accept and agree to be bound by these Terms of Use. 
-                  If you do not agree to these terms, please do not use our Website or purchase our products.
+                  By accessing and using infinity-crochet.com ("Website"), visitors accept and agree to be bound by these Terms of Use. 
+                  If these terms are not acceptable, please do not use the Website or purchase products.
                 </p>
               </section>
 
               <section>
                 <h2 className="text-2xl font-semibold text-purple-dark mb-4">Use of Website</h2>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">Permitted Use</h3>
-                <p className="mb-4">You may use our Website to:</p>
+                <p className="mb-4">The Website may be used to:</p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li>Browse and purchase handmade crochet products</li>
-                  <li>Create and manage your account</li>
-                  <li>Access information about our products and services</li>
+                  <li>Create and manage accounts</li>
+                  <li>Access information about products and services</li>
                 </ul>
 
                 <h3 className="text-xl font-semibold text-gray-900 mb-2 mt-4">Prohibited Use</h3>
-                <p className="mb-4">You may NOT:</p>
+                <p className="mb-4">Users may NOT:</p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li>Use the Website for any illegal purpose</li>
-                  <li>Attempt to gain unauthorized access to our systems</li>
-                  <li>Copy, reproduce, or distribute our content without permission</li>
+                  <li>Attempt to gain unauthorized access to systems</li>
+                  <li>Copy, reproduce, or distribute content without permission</li>
                   <li>Use automated systems to access the Website</li>
-                  <li>Interfere with the proper functioning of our Website</li>
+                  <li>Interfere with the proper functioning of the Website</li>
                 </ul>
               </section>
 
               <section>
                 <h2 className="text-2xl font-semibold text-purple-dark mb-4">Product Information</h2>
                 <p className="mb-4">
-                  All products sold on our Website are handmade crochet items. While we strive for accuracy in product descriptions 
+                  All products sold on the Website are handmade crochet items. While accuracy is maintained in product descriptions 
                   and images:
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li>Colors may vary slightly due to monitor settings and handmade nature</li>
                   <li>Small variations in size and appearance are natural characteristics of handmade items</li>
-                  <li>We reserve the right to modify product descriptions and availability</li>
+                  <li>Product descriptions and availability are subject to modification</li>
                   <li>Prices are subject to change without notice</li>
                 </ul>
               </section>
@@ -69,7 +69,7 @@ export default function TermsOfUse() {
                 <h2 className="text-2xl font-semibold text-purple-dark mb-4">Orders and Payments</h2>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">Order Acceptance</h3>
                 <p className="mb-4">
-                  All orders are subject to acceptance and availability. We reserve the right to refuse or cancel any order for any reason, 
+                  All orders are subject to acceptance and availability. Infinity Crochet reserves the right to refuse or cancel any order for any reason, 
                   including but not limited to product availability, errors in pricing, or suspected fraud.
                 </p>
 
@@ -77,16 +77,16 @@ export default function TermsOfUse() {
                 <ul className="list-disc pl-6 space-y-2">
                   <li>All payments are processed securely through Stripe</li>
                   <li>Prices are in USD unless stated otherwise</li>
-                  <li>You must provide accurate payment information</li>
+                  <li>Accurate payment information must be provided</li>
                   <li>Payment is due at the time of order placement</li>
                 </ul>
               </section>
 
               <section>
                 <h2 className="text-2xl font-semibold text-purple-dark mb-4">Shipping and Delivery</h2>
-                <p className="mb-4">
-                  We ship to addresses in the United States, Canada, United Kingdom, Australia, and the European Union. 
-                  Shipping times vary based on location and carrier. See our Shipment Policy for detailed information.
+                <p>
+                  Shipping is available to addresses in the United States, Canada, United Kingdom, Australia, and the European Union. 
+                  Shipping times vary based on location and carrier. See the Shipment Policy for detailed information.
                 </p>
               </section>
 
@@ -105,23 +105,23 @@ export default function TermsOfUse() {
 
               <section>
                 <h2 className="text-2xl font-semibold text-purple-dark mb-4">User Accounts</h2>
-                <p className="mb-4">If you create an account:</p>
+                <p className="mb-4">Account holders are responsible for:</p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>You are responsible for maintaining the confidentiality of your password</li>
-                  <li>You are responsible for all activities under your account</li>
-                  <li>You must provide accurate and current information</li>
-                  <li>We may suspend or terminate accounts that violate these terms</li>
+                  <li>Maintaining the confidentiality of passwords</li>
+                  <li>All activities under their account</li>
+                  <li>Providing accurate and current information</li>
+                  <li>Accounts that violate these terms may be suspended or terminated</li>
                 </ul>
               </section>
 
               <section>
                 <h2 className="text-2xl font-semibold text-purple-dark mb-4">Disclaimers</h2>
                 <p className="mb-4">
-                  <strong>AS-IS BASIS:</strong> Our Website and products are provided "as is" without warranties of any kind, 
+                  <strong>AS-IS BASIS:</strong> The Website and products are provided "as is" without warranties of any kind, 
                   either express or implied.
                 </p>
                 <p>
-                  <strong>HANDMADE NATURE:</strong> Due to the handmade nature of our products, slight variations are expected 
+                  <strong>HANDMADE NATURE:</strong> Due to the handmade nature of products, slight variations are expected 
                   and are not considered defects.
                 </p>
               </section>
@@ -137,16 +137,16 @@ export default function TermsOfUse() {
               <section>
                 <h2 className="text-2xl font-semibold text-purple-dark mb-4">Indemnification</h2>
                 <p>
-                  You agree to indemnify and hold Infinity Crochet harmless from any claims, damages, losses, liabilities, 
-                  and expenses arising from your use of our Website or violation of these Terms.
+                  Users agree to indemnify and hold Infinity Crochet harmless from any claims, damages, losses, liabilities, 
+                  and expenses arising from use of the Website or violation of these Terms.
                 </p>
               </section>
 
               <section>
                 <h2 className="text-2xl font-semibold text-purple-dark mb-4">Changes to Terms</h2>
                 <p>
-                  We reserve the right to modify these Terms of Use at any time. Changes will be effective immediately upon 
-                  posting to the Website. Your continued use of the Website constitutes acceptance of the modified terms.
+                  Infinity Crochet reserves the right to modify these Terms of Use at any time. Changes will be effective immediately upon 
+                  posting to the Website. Continued use of the Website constitutes acceptance of the modified terms.
                 </p>
               </section>
 
@@ -160,10 +160,10 @@ export default function TermsOfUse() {
 
               <section>
                 <h2 className="text-2xl font-semibold text-purple-dark mb-4">Contact Information</h2>
-                <p>
-                  For questions about these Terms of Use, please contact us at:
+                <p className="mb-4">
+                  For questions about these Terms of Use, contact Infinity Crochet at:
                 </p>
-                <p className="mt-2">
+                <p>
                   <strong>Email:</strong> <a href="mailto:infinitycrochet1@gmail.com" className="text-purple-600 hover:underline">infinitycrochet1@gmail.com</a>
                 </p>
               </section>

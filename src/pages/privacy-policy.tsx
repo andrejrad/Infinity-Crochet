@@ -25,16 +25,16 @@ export default function PrivacyPolicy() {
               <section>
                 <h2 className="text-2xl font-semibold text-purple-dark mb-4">Introduction</h2>
                 <p>
-                  At Infinity Crochet, we are committed to protecting your privacy and ensuring the security of your personal information. 
-                  This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website 
-                  infinity-crochet.com and make purchases from our online store.
+                  Infinity Crochet is committed to protecting customer privacy and ensuring the security of personal information. 
+                  This Privacy Policy explains how information is collected, used, disclosed, and safeguarded when customers visit 
+                  infinity-crochet.com and make purchases from the online store.
                 </p>
               </section>
 
               <section>
                 <h2 className="text-2xl font-semibold text-purple-dark mb-4">Information We Collect</h2>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">Personal Information</h3>
-                <p className="mb-4">When you place an order or create an account, we collect:</p>
+                <p className="mb-4">When placing an order or creating an account, the following information is collected:</p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li>Name and contact information (email address, phone number)</li>
                   <li>Shipping and billing addresses</li>
@@ -47,28 +47,29 @@ export default function PrivacyPolicy() {
                   <li>Browser type and version</li>
                   <li>Device information</li>
                   <li>IP address</li>
-                  <li>Pages visited and time spent on our site</li>
+                  <li>Pages visited and time spent on the site</li>
                 </ul>
               </section>
 
               <section>
-                <h2 className="text-2xl font-semibold text-purple-dark mb-4">How We Use Your Information</h2>
+                <h2 className="text-2xl font-semibold text-purple-dark mb-4">How Information Is Used</h2>
+                <p className="mb-4">Customer information is used to:</p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Process and fulfill your orders</li>
+                  <li>Process and fulfill orders</li>
                   <li>Send order confirmations and shipping updates</li>
                   <li>Respond to customer service requests</li>
-                  <li>Improve our website and products</li>
-                  <li>Send promotional emails (with your consent)</li>
+                  <li>Improve the website and products</li>
+                  <li>Send promotional emails (with consent)</li>
                   <li>Prevent fraudulent transactions</li>
                 </ul>
               </section>
 
               <section>
                 <h2 className="text-2xl font-semibold text-purple-dark mb-4">Information Sharing</h2>
-                <p className="mb-4">We do not sell or rent your personal information. We may share your information with:</p>
+                <p className="mb-4">Personal information is not sold or rented. Information may be shared with:</p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li><strong>Service Providers:</strong> Stripe (payment processing), Shippo (shipping), Firebase (data storage)</li>
-                  <li><strong>Legal Requirements:</strong> When required by law or to protect our rights</li>
+                  <li><strong>Legal Requirements:</strong> When required by law or to protect legal rights</li>
                   <li><strong>Business Transfers:</strong> In the event of a merger or acquisition</li>
                 </ul>
               </section>
@@ -76,53 +77,53 @@ export default function PrivacyPolicy() {
               <section>
                 <h2 className="text-2xl font-semibold text-purple-dark mb-4">Data Security</h2>
                 <p>
-                  We implement industry-standard security measures to protect your personal information. All payment transactions 
+                  Industry-standard security measures are implemented to protect personal information. All payment transactions 
                   are processed through Stripe's secure payment gateway. However, no method of transmission over the internet is 100% secure.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-2xl font-semibold text-purple-dark mb-4">Your Rights</h2>
-                <p className="mb-4">You have the right to:</p>
+                <h2 className="text-2xl font-semibold text-purple-dark mb-4">Customer Rights</h2>
+                <p className="mb-4">Customers have the right to:</p>
                 <ul className="list-disc pl-6 space-y-2">
-                  <li>Access your personal information</li>
+                  <li>Access personal information</li>
                   <li>Correct inaccurate information</li>
-                  <li>Request deletion of your information</li>
+                  <li>Request deletion of information</li>
                   <li>Opt-out of marketing communications</li>
-                  <li>Request a copy of your data</li>
+                  <li>Request a copy of data</li>
                 </ul>
               </section>
 
               <section>
                 <h2 className="text-2xl font-semibold text-purple-dark mb-4">Cookies</h2>
                 <p>
-                  We use cookies to enhance your browsing experience, remember your preferences, and analyze website traffic. 
-                  You can control cookie settings through your browser preferences.
+                  Cookies are used to enhance the browsing experience, remember preferences, and analyze website traffic. 
+                  Cookie settings can be controlled through browser preferences.
                 </p>
               </section>
 
               <section>
                 <h2 className="text-2xl font-semibold text-purple-dark mb-4">Children's Privacy</h2>
                 <p>
-                  Our website is not intended for children under 13 years of age. We do not knowingly collect personal information 
-                  from children under 13.
+                  This website is not intended for children under 13 years of age. Personal information 
+                  from children under 13 is not knowingly collected.
                 </p>
               </section>
 
               <section>
                 <h2 className="text-2xl font-semibold text-purple-dark mb-4">Changes to This Policy</h2>
                 <p>
-                  We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated 
+                  This Privacy Policy may be updated from time to time. Any changes will be posted on this page with an updated 
                   revision date.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-2xl font-semibold text-purple-dark mb-4">Contact Us</h2>
-                <p>
-                  If you have questions about this Privacy Policy or would like to exercise your rights, please contact us at:
+                <h2 className="text-2xl font-semibold text-purple-dark mb-4">Contact Information</h2>
+                <p className="mb-4">
+                  For questions about this Privacy Policy or to exercise customer rights, contact Infinity Crochet at:
                 </p>
-                <p className="mt-2">
+                <p>
                   <strong>Email:</strong> <a href="mailto:infinitycrochet1@gmail.com" className="text-purple-600 hover:underline">infinitycrochet1@gmail.com</a>
                 </p>
               </section>
