@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer className="bg-purple-dark text-white">
       <div className="container-custom py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand Section */}
           <div>
             <h3 className="text-2xl font-bold mb-4">Infinity Crochet</h3>
@@ -24,11 +24,6 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/#about" className="text-white/80 hover:text-white transition-colors">
-                  About Us
-                </Link>
-              </li>
-              <li>
                 <Link href="/#training" className="text-white/80 hover:text-white transition-colors">
                   Training
                 </Link>
@@ -36,6 +31,38 @@ export default function Footer() {
               <li>
                 <Link href="/shop/category/custom" className="text-white/80 hover:text-white transition-colors">
                   Custom Orders
+                </Link>
+              </li>
+            </ul>
+          </div>
+          
+          {/* Company */}
+          <div>
+            <h4 className="text-lg font-semibold mb-4">Company</h4>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/#about" className="text-white/80 hover:text-white transition-colors">
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy-policy" className="text-white/80 hover:text-white transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms-of-use" className="text-white/80 hover:text-white transition-colors">
+                  Terms of Use
+                </Link>
+              </li>
+              <li>
+                <Link href="/refund-policy" className="text-white/80 hover:text-white transition-colors">
+                  Refund & Cancelation Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/shipment-policy" className="text-white/80 hover:text-white transition-colors">
+                  Shipment Policy
                 </Link>
               </li>
             </ul>

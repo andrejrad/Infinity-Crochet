@@ -57,7 +57,7 @@ export default function Home() {
         <div className="container-custom">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold text-purple-dark mb-4">
-              Explore Our Collections
+              Explore Infinity Crochet Collections
             </h2>
             <p className="text-lg text-gray-700">
               Discover beautiful handmade items across all categories
@@ -86,7 +86,7 @@ export default function Home() {
               Featured Products
             </h2>
             <p className="text-lg text-gray-700">
-              Handpicked favorites from our collection
+              Handpicked favorites from Infinity Crochet collection
             </p>
           </div>
           
@@ -109,13 +109,11 @@ export default function Home() {
         <div className="container-custom">
           <div className="max-w-4xl mx-auto text-center text-white">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Learn to Crochet with Us
+              Learn to Crochet with Zeljka
             </h2>
             <div className="w-24 h-1 bg-white/50 mx-auto mb-8"></div>
             <p className="text-lg leading-relaxed mb-8">
-              Whether you're a complete beginner or looking to refine your skills, we offer personalized 
-              crochet training for all levels. Learn the art of crochet from the comfort of your home with 
-              our online sessions, or join us for hands-on in-person workshops.
+              Whether completely new to crochet or looking to refine existing skills, Infinity Crochet offers personalized training for all experience levels. Discover the art of crochet from the comfort of home through online sessions, or take part in hands-on, in-person workshops.
             </p>
             
             <div className="grid md:grid-cols-2 gap-8 mt-12">
@@ -131,7 +129,7 @@ export default function Home() {
                 <div className="text-4xl mb-4">👥</div>
                 <h3 className="text-2xl font-semibold mb-3">In-Person Workshops</h3>
                 <p className="text-white/90">
-                  Join our interactive workshops for hands-on learning and connect with fellow 
+                  Join interactive workshops for hands-on learning and connect with fellow 
                   crochet enthusiasts in a fun, supportive environment.
                 </p>
               </div>
@@ -219,10 +217,10 @@ export default function Home() {
             Ready to Find Your Perfect Piece?
           </h2>
           <p className="text-lg text-purple-dark/80 mb-8 max-w-2xl mx-auto">
-            Browse our full collection and discover handmade treasures waiting for you
+            Browse full Infinity Crochet collection and discover handmade treasures waiting for you
           </p>
           <a href="/shop" className="btn-primary text-lg">
-            Visit Our Shop
+            Visit Infinity Crochet Shop
           </a>
         </div>
       </section>

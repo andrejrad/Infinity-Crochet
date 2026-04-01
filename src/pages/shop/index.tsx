@@ -40,10 +40,10 @@ export default function Shop() {
       <section className="gradient-bg pt-32 pb-20">
         <div className="container-custom text-center">
           <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-            Our Shop
+            Infinity Crochet Shop
           </h1>
           <p className="text-xl text-white/90 max-w-2xl mx-auto">
-            Discover our full collection of handmade crochet treasures
+            Discover full collection of handmade crochet treasures
           </p>
         </div>
       </section>
@@ -56,7 +56,7 @@ export default function Shop() {
               Shop by Category
             </h2>
             <p className="text-lg text-gray-700">
-              Explore our collections and find exactly what you're looking for
+              Explore all collections and find exactly what you're looking for
             </p>
           </div>
           
