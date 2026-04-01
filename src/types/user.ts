@@ -114,13 +114,17 @@ export interface Order {
   total: number;
   paymentIntent: string;
   paymentStatus: 'pending' | 'succeeded' | 'failed' | 'refunded';
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded';
   trackingNumber?: string;
   trackingUrl?: string;
   trackingUrlProvider?: string;
   shippingLabelUrl?: string;
   carrier?: string;
   shippingStatus?: 'pending' | 'label_created' | 'in_transit' | 'delivered';
+  refundId?: string;
+  refundedAt?: string;
+  refundAmount?: number;
+  refundReason?: string;
   createdAt: string;
   updatedAt: string;
 }

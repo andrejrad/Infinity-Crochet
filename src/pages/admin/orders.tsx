@@ -17,6 +17,7 @@ export default function AdminOrders() {
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
   const [creatingLabel, setCreatingLabel] = useState<string | null>(null);
+  const [refundingOrderId, setRefundingOrderId] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -108,6 +109,60 @@ export default function AdminOrders() {
     }
   };
 
+  const handleRefundOrder = async (order: Order) => {
+    const confirmRefund = window.confirm(
+      `Are you sure you want to refund this order?\n\n` +
+      `Order: ${order.orderNumber}\n` +
+      `Amount: $${order.total.toFixed(2)}\n\n` +
+      `This will process a FULL refund including tax and shipping. This action cannot be undone.`
+    );
+
+    if (!confirmRefund) return;
+
+    const reason = window.prompt(
+      'Refund reason (optional):',
+      'requested_by_customer'
+    );
+
+    setRefundingOrderId(order.id!);
+    try {
+      const response = await fetch('/api/refund-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId: order.id,
+          reason: reason || 'requested_by_customer',
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert(`✅ ${data.message}\n\nRefund ID: ${data.refundId}`);
+        
+        // Update local state
+        setOrders(orders.map(o => 
+          o.id === order.id 
+            ? { 
+                ...o, 
+                status: 'refunded' as any,
+                refundId: data.refundId,
+                refundAmount: data.amount,
+                refundedAt: new Date().toISOString(),
+              }
+            : o
+        ));
+      } else {
+        console.error('Refund failed:', data);
+        alert('Failed to process refund: ' + (data.error || 'Unknown error'));
+      }
+    } catch (error: any) {
+      console.error('Error processing refund:', error);
+      alert('Error processing refund: ' + error.message);
+    } finally {
+      setRefundingOrderId(null);
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'delivered':
@@ -120,6 +175,8 @@ export default function AdminOrders() {
         return 'bg-gray-100 text-gray-800';
       case 'cancelled':
         return 'bg-red-100 text-red-800';
+      case 'refunded':
+        return 'bg-purple-100 text-purple-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -207,7 +264,7 @@ export default function AdminOrders() {
 
             {/* Filter Tabs */}
             <div className="bg-white rounded-xl shadow mb-6 p-2 flex flex-wrap gap-2">
-              {['all', 'pending', 'processing', 'shipped', 'delivered', 'cancelled'].map((status) => (
+              {['all', 'pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'].map((status) => (
                 <button
                   key={status}
                   onClick={() => setFilter(status)}
@@ -336,7 +393,7 @@ export default function AdminOrders() {
                               <select
                                 value={order.status}
                                 onChange={(e) => updateOrderStatus(order.id!, e.target.value)}
-                                disabled={updatingOrderId === order.id}
+                                disabled={updatingOrderId === order.id || order.status === 'refunded'}
                                 className="border border-gray-300 rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:opacity-50"
                               >
                                 <option value="pending">Pending</option>
@@ -344,14 +401,24 @@ export default function AdminOrders() {
                                 <option value="shipped">Shipped</option>
                                 <option value="delivered">Delivered</option>
                                 <option value="cancelled">Cancelled</option>
+                                <option value="refunded">Refunded</option>
                               </select>
-                              {!order.trackingNumber && order.status !== 'cancelled' && (
+                              {!order.trackingNumber && order.status !== 'cancelled' && order.status !== 'refunded' && (
                                 <button
                                   onClick={() => handleCreateLabel(order)}
                                   disabled={creatingLabel === order.id}
                                   className="px-3 py-1 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 text-xs font-medium disabled:opacity-50"
                                 >
                                   {creatingLabel === order.id ? 'Creating...' : '📦 Create Label'}
+                                </button>
+                              )}
+                              {!order.refundId && order.status !== 'refunded' && (
+                                <button
+                                  onClick={() => handleRefundOrder(order)}
+                                  disabled={refundingOrderId === order.id}
+                                  className="px-3 py-1 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 text-xs font-medium disabled:opacity-50"
+                                >
+                                  {refundingOrderId === order.id ? 'Processing...' : '💳 Refund Order'}
                                 </button>
                               )}
                             </div>
@@ -499,6 +566,16 @@ export default function AdminOrders() {
                                           <td colSpan={4} className="px-4 py-3 text-sm text-right font-semibold text-gray-900">Total:</td>
                                           <td className="px-4 py-3 text-sm text-right font-bold text-purple-600">${order.total.toFixed(2)}</td>
                                         </tr>
+                                        {order.refundId && (
+                                          <tr className="bg-red-50 border-t-2 border-red-200">
+                                            <td colSpan={4} className="px-4 py-3 text-sm text-right font-semibold text-red-700">
+                                              💳 Refunded:
+                                            </td>
+                                            <td className="px-4 py-3 text-sm text-right font-bold text-red-700">
+                                              -${order.refundAmount?.toFixed(2) || order.total.toFixed(2)}
+                                            </td>
+                                          </tr>
+                                        )}
                                       </tfoot>
                                     </table>
                                   </div>
@@ -525,6 +602,27 @@ export default function AdminOrders() {
                                     </div>
                                   </div>
                                 </div>
+                                
+                                {/* Refund Information */}
+                                {order.refundId && (
+                                  <div className="mt-6">
+                                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                                      <h4 className="text-sm font-semibold text-red-800 mb-3">💳 Refund Information</h4>
+                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                        <div className="space-y-1">
+                                          <p><span className="text-red-600">Refund ID:</span> <span className="font-mono text-xs text-red-900">{order.refundId}</span></p>
+                                          <p><span className="text-red-600">Amount:</span> <span className="font-bold text-red-900">${order.refundAmount?.toFixed(2) || order.total.toFixed(2)}</span></p>
+                                        </div>
+                                        <div className="space-y-1">
+                                          <p><span className="text-red-600">Refunded At:</span> <span className="font-medium text-red-900">{order.refundedAt ? formatDate(order.refundedAt) : 'N/A'}</span></p>
+                                          {order.refundReason && (
+                                            <p><span className="text-red-600">Reason:</span> <span className="font-medium text-red-900 capitalize">{order.refundReason.replace(/_/g, ' ')}</span></p>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
                               </div>
                             </td>
                           </tr>

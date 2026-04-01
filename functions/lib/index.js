@@ -375,6 +375,27 @@ function generateStatusChangeEmail(order, oldStatus) {
         <p style="margin-top: 30px;">We hope to see you again soon!</p>
       `;
             break;
+        case 'refunded':
+            statusEmoji = '💳';
+            statusMessage = 'Your order has been fully refunded';
+            nextSteps = `
+        <h3>Refund Processed:</h3>
+        <p>Your order has been refunded. The full amount including tax and shipping has been returned to your original payment method.</p>
+        
+        <h3>Refund Details:</h3>
+        <ul style="padding-left: 20px;">
+          <li><strong>Refund Amount:</strong> $${order.total.toFixed(2)} (full amount paid)</li>
+          <li>Processing typically takes 5-10 business days, depending on your bank</li>
+          <li>The refund will appear on the statement from Stripe</li>
+          <li>Check your order history for refund confirmation</li>
+        </ul>
+        
+        <p style="margin-top: 30px;">
+          We're sorry this didn't work out. If there was an issue with your order or if you have any questions, 
+          please don't hesitate to contact us. We'd love another chance to serve you in the future!
+        </p>
+      `;
+            break;
         default:
             statusEmoji = '📝';
             statusMessage = 'Order status updated';
@@ -512,7 +533,7 @@ exports.sendOrderStatusChangeEmail = functions.firestore
         return null;
     }
     // Only send emails for specific status changes
-    const emailStatuses = ['processing', 'shipped', 'delivered', 'cancelled'];
+    const emailStatuses = ['processing', 'shipped', 'delivered', 'cancelled', 'refunded'];
     if (!emailStatuses.includes(newStatus)) {
         console.log(`Status ${newStatus} doesn't trigger email, skipping`);
         return null;
