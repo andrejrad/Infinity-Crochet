@@ -78,6 +78,7 @@ export default async function handler(
       quantity: item.quantity,
       price: item.product.price,
       colors: item.selectedColors || {},
+      image: item.product.images?.[0] || item.product.image || '',
     }));
 
     // Create or retrieve Stripe customer with shipping address prefilled

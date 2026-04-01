@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
-import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
+import { collection, query, where, orderBy, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { useAuth } from '../../contexts/AuthContext';
 import Navbar from '../../components/Navbar';
@@ -26,6 +26,42 @@ export default function OrderHistory() {
     }
   }, [user, authLoading, router]);
 
+  const enrichOrdersWithProductImages = async (ordersData: Order[]) => {
+    // For each order, check if products are missing images and fetch them
+    const enrichedOrders = await Promise.all(
+      ordersData.map(async (order) => {
+        const enrichedProducts = await Promise.all(
+          order.products.map(async (product) => {
+            // If image is missing, try to fetch product details
+            if (!product.image && (product.id || product.productId)) {
+              try {
+                const productId = product.id || product.productId;
+                const productDoc = await getDoc(doc(db, 'products', productId!));
+                if (productDoc.exists()) {
+                  const productData = productDoc.data();
+                  return {
+                    ...product,
+                    image: productData.images?.[0] || productData.image || '/placeholder.jpg',
+                  };
+                }
+              } catch (error) {
+                console.error('Error fetching product image:', error);
+              }
+            }
+            return product;
+          })
+        );
+        
+        return {
+          ...order,
+          products: enrichedProducts,
+        };
+      })
+    );
+    
+    return enrichedOrders;
+  };
+
   const fetchOrders = async () => {
     if (!user) return;
 
@@ -45,7 +81,10 @@ export default function OrderHistory() {
         ...doc.data()
       })) as Order[];
       
-      setOrders(ordersData);
+      // Enrich orders with product images if missing
+      const enrichedOrders = await enrichOrdersWithProductImages(ordersData);
+      
+      setOrders(enrichedOrders);
     } catch (error) {
       console.error('Error fetching orders:', error);
       
