@@ -118,7 +118,9 @@ export default function Home() {
             
             <div className="grid md:grid-cols-2 gap-8 mt-12">
               <div className="bg-white/10 backdrop-blur-sm p-8 rounded-soft">
-                <div className="text-4xl mb-4">💻</div>
+                <div className="mb-4 flex justify-center md:justify-start">
+                  <img src="/images/online.png" alt="Online Training" className="h-16 w-16 object-contain" />
+                </div>
                 <h3 className="text-2xl font-semibold mb-3">Online Training</h3>
                 <p className="text-white/90">
                   Learn at your own pace with personalized video lessons and one-on-one guidance. 
@@ -126,7 +128,9 @@ export default function Home() {
                 </p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm p-8 rounded-soft">
-                <div className="text-4xl mb-4">👥</div>
+                <div className="mb-4 flex justify-center md:justify-start">
+                  <img src="/images/in-person.png" alt="In-Person Workshops" className="h-16 w-16 object-contain" />
+                </div>
                 <h3 className="text-2xl font-semibold mb-3">In-Person Workshops</h3>
                 <p className="text-white/90">
                   Join interactive workshops for hands-on learning and connect with fellow 
