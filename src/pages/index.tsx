@@ -204,7 +204,7 @@ export default function Home() {
             </div>
             <div className="text-center">
               <div className="mb-4 flex justify-center items-center h-24">
-                <img src="/images/perfect-gifts.png" alt="Perfect Gifts" className="h-24 w-24 object-contain" />
+                <img src="/images/perfect-gifts.png" alt="Perfect Gifts" className="h-28 w-28 object-contain" />
               </div>
               <h3 className="font-semibold text-purple-dark mb-2">Perfect Gifts</h3>
               <p className="text-sm text-gray-600">For all occasions</p>
