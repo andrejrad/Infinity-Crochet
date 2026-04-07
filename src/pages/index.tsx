@@ -118,7 +118,7 @@ export default function Home() {
             
             <div className="grid md:grid-cols-2 gap-8 mt-12">
               <div className="bg-white/10 backdrop-blur-sm p-8 rounded-soft">
-                <div className="mb-4 flex justify-center md:justify-start">
+                <div className="mb-2 flex justify-center md:justify-start">
                   <img src="/images/online.png" alt="Online Training" className="h-64 w-64 object-contain" />
                 </div>
                 <h3 className="text-2xl font-semibold mb-3">Online Training</h3>
@@ -128,7 +128,7 @@ export default function Home() {
                 </p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm p-8 rounded-soft">
-                <div className="mb-4 flex justify-center md:justify-start">
+                <div className="mb-2 flex justify-center md:justify-start">
                   <img src="/images/in-person.png" alt="In-Person Workshops" className="h-64 w-64 object-contain" />
                 </div>
                 <h3 className="text-2xl font-semibold mb-3">In-Person Workshops</h3>
