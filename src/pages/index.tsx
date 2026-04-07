@@ -197,7 +197,7 @@ export default function Home() {
             </div>
             <div className="text-center">
               <div className="mb-4 flex justify-center items-center h-24">
-                <img src="/images/unique-designs.png" alt="Unique Designs" className="h-24 w-24 object-contain" />
+                <img src="/images/unique-designs.png" alt="Unique Designs" className="h-48 w-48 object-contain" />
               </div>
               <h3 className="font-semibold text-purple-dark mb-2">Unique Designs</h3>
               <p className="text-sm text-gray-600">One-of-a-kind creations</p>
