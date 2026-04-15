@@ -186,12 +186,14 @@ export default function AccountPage() {
                 <p className="text-gray-600 mb-4">
                   Track your orders and view order history
                 </p>
-                <Link href="/account/orders" className="btn-primary inline-block mr-3">
-                  View Orders
-                </Link>
-                <Link href="/shop" className="btn-secondary inline-block">
-                  Start Shopping
-                </Link>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center items-center max-w-md mx-auto">
+                  <Link href="/account/orders" className="btn-primary w-full sm:w-auto">
+                    View Orders
+                  </Link>
+                  <Link href="/shop" className="btn-secondary w-full sm:w-auto">
+                    Start Shopping
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
