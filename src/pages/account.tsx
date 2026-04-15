@@ -2,9 +2,39 @@ import { useAuth } from '@/contexts/AuthContext';
 import SEO from '@/components/SEO';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Link from 'next/link';
+import { useState, FormEvent } from 'react';
 
 export default function AccountPage() {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, updateUserProfile } = useAuth();
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [newDisplayName, setNewDisplayName] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  const handleUpdateName = async (e: FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    
+    if (!newDisplayName.trim()) {
+      setError('Name cannot be empty');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await updateUserProfile(newDisplayName.trim());
+      setSuccess('Name updated successfully!');
+      setIsEditingName(false);
+      setNewDisplayName('');
+    } catch (err: any) {
+      setError(err.message || 'Failed to update name');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <ProtectedRoute>
@@ -26,14 +56,74 @@ export default function AccountPage() {
                 <h2 className="text-2xl font-semibold text-purple-dark mb-4">
                   Profile Information
                 </h2>
-                <div className="space-y-3">
+
+                {success && (
+                  <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-4">
+                    {success}
+                  </div>
+                )}
+
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+                    {error}
+                  </div>
+                )}
+
+                <div className="space-y-4">
                   <div>
                     <label className="text-sm text-gray-600">Name</label>
-                    <p className="text-lg font-medium">{user?.displayName || 'Not set'}</p>
+                    {isEditingName ? (
+                      <form onSubmit={handleUpdateName} className="mt-2">
+                        <input
+                          type="text"
+                          value={newDisplayName}
+                          onChange={(e) => setNewDisplayName(e.target.value)}
+                          placeholder={user?.displayName || 'Enter your name'}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple focus:border-transparent mb-2"
+                          autoFocus
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            type="submit"
+                            disabled={loading}
+                            className="px-4 py-2 bg-purple text-white rounded-lg hover:bg-purple-dark transition-colors disabled:opacity-50"
+                          >
+                            {loading ? 'Saving...' : 'Save'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsEditingName(false);
+                              setNewDisplayName('');
+                              setError('');
+                            }}
+                            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    ) : (
+                      <div className="flex items-center justify-between mt-1">
+                        <p className="text-lg font-medium">{user?.displayName || 'Not set'}</p>
+                        <button
+                          onClick={() => {
+                            setIsEditingName(true);
+                            setNewDisplayName(user?.displayName || '');
+                            setError('');
+                            setSuccess('');
+                          }}
+                          className="text-purple hover:text-purple-dark text-sm font-medium"
+                        >
+                          Edit
+                        </button>
+                      </div>
+                    )}
                   </div>
                   <div>
                     <label className="text-sm text-gray-600">Email</label>
                     <p className="text-lg font-medium">{user?.email}</p>
+                    <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-600">Account Type</label>

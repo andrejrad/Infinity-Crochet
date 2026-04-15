@@ -8,7 +8,7 @@ import {
   updateProfile,
   sendPasswordResetEmail
 } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { User } from '@/types/user';
 
@@ -19,6 +19,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, displayName: string) => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
+  updateUserProfile: (displayName: string) => Promise<void>;
   isAdmin: boolean;
 }
 
@@ -102,10 +103,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await sendPasswordResetEmail(auth, email);
   };
 
+  const updateUserProfile = async (displayName: string) => {
+    if (!auth.currentUser || !user) {
+      throw new Error('No user logged in');
+    }
+
+    // Update Firebase Auth profile
+    await updateProfile(auth.currentUser, { displayName });
+
+    // Update Firestore document
+    await updateDoc(doc(db, 'users', user.uid), {
+      displayName,
+    });
+
+    // Update local state
+    setUser({
+      ...user,
+      displayName,
+    });
+  };
+
   const isAdmin = user?.role === 'admin';
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, resetPassword, isAdmin }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, resetPassword, updateUserProfile, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );
