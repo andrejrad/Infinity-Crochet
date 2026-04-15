@@ -117,7 +117,7 @@ export default function Home() {
             </p>
             
             <div className="grid md:grid-cols-2 gap-8 mt-12">
-              <div className="bg-white/10 backdrop-blur-sm px-8 py-3 rounded-soft">
+              <div className="bg-white/10 backdrop-blur-sm px-8 py-1 rounded-soft">
                 <div className="mb-2 flex justify-center md:justify-start">
                   <img src="/images/online.png" alt="Online Training" className="h-64 w-64 object-contain" />
                 </div>
@@ -127,7 +127,7 @@ export default function Home() {
                   Perfect for busy schedules.
                 </p>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm px-8 py-3 rounded-soft">
+              <div className="bg-white/10 backdrop-blur-sm px-8 py-1 rounded-soft">
                 <div className="mb-2 flex justify-center md:justify-start">
                   <img src="/images/in-person.png" alt="In-Person Workshops" className="h-64 w-64 object-contain" />
                 </div>
