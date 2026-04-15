@@ -157,7 +157,8 @@ export default function LoginPage() {
 
               {resetSuccess && (
                 <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">
-                  Password reset email sent! Check your inbox.
+                  <p className="font-medium">Password reset email sent!</p>
+                  <p className="text-sm mt-1">Check your inbox and junk/spam folder if you don't see it.</p>
                 </div>
               )}
 
