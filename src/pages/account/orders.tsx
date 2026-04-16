@@ -140,7 +140,9 @@ export default function OrderHistory() {
       setReviews(reviewsMap);
       setReviewForms(formsMap);
     } catch (error) {
-      console.error('Error fetching reviews:', error);
+      // Silently fail - reviews will just be empty
+      // This allows the page to still function even if reviews can't be loaded
+      console.warn('Could not load existing reviews (this is okay for first-time users):', error);
     }
   };
 
