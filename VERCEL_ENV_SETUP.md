@@ -2,51 +2,35 @@
 
 ## Required Environment Variables for Training Programs
 
-To enable the Training Programs purchase functionality, you need to configure these environment variables in Vercel:
+The Training Programs feature uses the **same Stripe configuration** as the existing webshop checkout. No additional environment variables are needed!
 
-### 1. Go to Vercel Dashboard
-- Visit https://vercel.com/
-- Select your `infinity-crochet` project
-- Go to **Settings** → **Environment Variables**
-
-### 2. Add the following variables:
-
-#### Already Configured (from previous setup):
+### Already Configured (from webshop setup):
 - `STRIPE_SECRET_KEY` - Your Stripe secret key
 - `STRIPE_WEBHOOK_SECRET` - Your Stripe webhook secret
 - `NEXT_PUBLIC_FIREBASE_PROJECT_ID` - infinity-crochet
 - `FIREBASE_CLIENT_EMAIL` - From Firebase Admin SDK
 - `FIREBASE_PRIVATE_KEY` - From Firebase Admin SDK
 
-#### NEW - Required for Training Programs:
-```
-NEXT_PUBLIC_BASE_URL=https://infinity-crochet.com
-```
+### How It Works:
 
-### 3. Important Notes:
-
-- Make sure to set the environment for: **Production**, **Preview**, and **Development**
-- After adding the variable, you need to **redeploy** for changes to take effect
-- The `NEXT_PUBLIC_BASE_URL` should NOT have a trailing slash
-
-### 4. Redeploy
-
-After adding the environment variable:
-```bash
-vercel --prod
-```
+The program checkout reuses the same Stripe integration as product checkout:
+- Uses `req.headers.origin` for dynamic URLs (works in all environments)
+- No hardcoded base URLs needed
+- Works automatically in development, preview, and production
 
 ## Troubleshooting
 
-If you're still getting 500 errors after adding `NEXT_PUBLIC_BASE_URL`:
+If you're getting 500 errors when clicking "Purchase Program":
 
-1. **Check Vercel logs:**
+1. **Check Vercel function logs:**
    - Go to Vercel Dashboard → Your Project → Deployments
    - Click on the latest deployment
    - Go to **Functions** tab
    - Look for errors in `api/create-program-checkout`
 
-2. **Verify all environment variables are set correctly**
+2. **Verify Stripe webhook is configured:**
+   - The webhook should already be handling product orders
+   - The same webhook handles program purchases (metadata.type === 'program')
 
 3. **Check that Firebase Admin credentials are valid**
 
@@ -56,5 +40,5 @@ After deployment, you can test by:
 1. Creating a test program in admin panel
 2. Clicking "Purchase Program" on the program detail page
 3. You should be redirected to Stripe checkout
-
-If you see an alert with a specific error message, check the Vercel function logs for details.
+4. Complete purchase with test card (4242 4242 4242 4242)
+5. Verify program appears in "My Programs" after purchase

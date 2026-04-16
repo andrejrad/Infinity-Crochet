@@ -40,11 +40,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(500).json({ error: 'Server configuration error: Missing Stripe key' });
     }
 
-    if (!process.env.NEXT_PUBLIC_BASE_URL) {
-      console.error('NEXT_PUBLIC_BASE_URL is not configured');
-      return res.status(500).json({ error: 'Server configuration error: Missing base URL' });
-    }
-
     // Check if user already owns this program
     console.log('Checking existing purchase...');
     const existingPurchase = await db.collection('userPrograms')
@@ -89,8 +84,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           quantity: 1,
         },
       ],
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/training/${programId}?purchase=success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/training/${programId}?purchase=cancelled`,
+      success_url: `${req.headers.origin}/training/${programId}?purchase=success`,
+      cancel_url: `${req.headers.origin}/training/${programId}?purchase=cancelled`,
       metadata: {
         type: 'program',
         programId,
