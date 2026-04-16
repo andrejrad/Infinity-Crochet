@@ -108,6 +108,16 @@ export default function AdminDashboard() {
               </p>
             </Link>
 
+            <Link href="/admin/programs" className="card p-6 hover:shadow-xl transition-all">
+              <div className="text-4xl mb-4">🎓</div>
+              <h3 className="text-xl font-semibold text-purple-dark mb-2">
+                Training Programs
+              </h3>
+              <p className="text-gray-600">
+                Manage online training programs and videos
+              </p>
+            </Link>
+
             <Link href="/admin/categories" className="card p-6 hover:shadow-xl transition-all">
               <div className="text-4xl mb-4">📂</div>
               <h3 className="text-xl font-semibold text-purple-dark mb-2">
