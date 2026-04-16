@@ -132,7 +132,7 @@ export default function ProgramDetailPage() {
 
   const getYouTubeEmbedUrl = (url: string) => {
     const videoId = url.split('v=')[1]?.split('&')[0] || url.split('/').pop();
-    return `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&disablekb=1`;
+    return `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&disablekb=1&fs=0&iv_load_policy=3&cc_load_policy=0&playsinline=1`;
   };
 
   const canWatchVideo = (video: any) => {
@@ -200,8 +200,7 @@ export default function ProgramDetailPage() {
                         src={getYouTubeEmbedUrl(selectedVideo)}
                         title="Training Video"
                         className="w-full h-full"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope"
                       />
                     </div>
                   </div>
