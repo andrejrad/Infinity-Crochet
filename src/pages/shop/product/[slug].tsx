@@ -288,6 +288,14 @@ export default function ProductPage() {
                   <h1 className="text-4xl md:text-5xl font-bold text-purple-dark mb-4">
                     {product.name}
                   </h1>
+                  {reviews.length > 0 && (
+                    <div className="flex items-center gap-3 mb-4">
+                      <StarRating rating={Math.round(averageRating)} readonly size="md" />
+                      <span className="text-gray-600">
+                        {averageRating.toFixed(1)} ({reviews.length} {reviews.length === 1 ? 'review' : 'reviews'})
+                      </span>
+                    </div>
+                  )}
                   <div className="text-3xl font-bold text-purple mb-6">
                     ${product.price.toFixed(2)}
                   </div>
