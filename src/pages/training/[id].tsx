@@ -116,11 +116,15 @@ export default function ProgramDetailPage() {
       });
 
       const data = await response.json();
+      
+      console.log('Checkout response:', { status: response.status, data });
 
       if (response.ok && data.url) {
         window.location.href = data.url;
       } else {
-        alert(data.error || 'Failed to start checkout');
+        const errorMessage = data.error || 'Failed to start checkout';
+        console.error('Checkout error:', errorMessage, data);
+        alert(`Error: ${errorMessage}`);
         setPurchasing(false);
       }
     } catch (error) {

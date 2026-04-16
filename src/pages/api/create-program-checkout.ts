@@ -28,30 +28,49 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const { programId, userId, userEmail } = req.body;
 
+    console.log('Create program checkout request:', { programId, userId, userEmail });
+
     if (!programId || !userId || !userEmail) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
+    // Validate environment variables
+    if (!process.env.STRIPE_SECRET_KEY) {
+      console.error('STRIPE_SECRET_KEY is not configured');
+      return res.status(500).json({ error: 'Server configuration error: Missing Stripe key' });
+    }
+
+    if (!process.env.NEXT_PUBLIC_BASE_URL) {
+      console.error('NEXT_PUBLIC_BASE_URL is not configured');
+      return res.status(500).json({ error: 'Server configuration error: Missing base URL' });
+    }
+
     // Check if user already owns this program
+    console.log('Checking existing purchase...');
     const existingPurchase = await db.collection('userPrograms')
       .where('userId', '==', userId)
       .where('programId', '==', programId)
       .get();
 
     if (!existingPurchase.empty) {
+      console.log('User already owns this program');
       return res.status(400).json({ error: 'You already own this program' });
     }
 
     // Get program details
+    console.log('Fetching program details...');
     const programDoc = await db.collection('trainingPrograms').doc(programId).get();
     
     if (!programDoc.exists) {
+      console.log('Program not found:', programId);
       return res.status(404).json({ error: 'Program not found' });
     }
 
     const program = programDoc.data();
+    console.log('Program found:', program?.name);
 
     // Create Stripe checkout session
+    console.log('Creating Stripe checkout session...');
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
@@ -80,10 +99,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       },
     });
 
+    console.log('Stripe session created successfully:', session.id);
     return res.status(200).json({ url: session.url });
 
   } catch (error: any) {
     console.error('Error creating program checkout session:', error);
-    return res.status(500).json({ error: error.message || 'Failed to create checkout session' });
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      type: error.type,
+      code: error.code,
+    });
+    return res.status(500).json({ 
+      error: error.message || 'Failed to create checkout session',
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 }
