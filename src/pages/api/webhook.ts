@@ -80,6 +80,28 @@ export default async function handler(
     console.log('Session metadata:', session.metadata);
 
     try {
+      // Check if this is a program purchase
+      if (session.metadata?.type === 'program') {
+        console.log('🎓 Processing program purchase');
+        
+        const { programId, userId, programName } = session.metadata;
+        
+        // Create user program entry
+        await db.collection('userPrograms').add({
+          userId,
+          programId,
+          programName,
+          purchasedAt: new Date(),
+          progress: {},
+          completionPercentage: 0,
+        });
+        
+        console.log('✅ Program access granted:', programName, 'to user:', userId);
+        
+        return res.status(200).json({ received: true, type: 'program' });
+      }
+
+      // Otherwise, handle as regular product order
       // Generate order number (YYMMDD-XXXX format)
       const now = new Date();
       const dateStr = now.getFullYear().toString().slice(-2) + 

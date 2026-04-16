@@ -60,5 +60,36 @@ service cloud.firestore {
       // Users can update/delete their own reviews
       allow update, delete: if request.auth != null && request.auth.uid == resource.data.userId;
     }
+    
+    // Training Programs collection - public read published programs, admin write
+    match /trainingPrograms/{programId} {
+      allow read: if resource.data.published == true || 
+                     (request.auth != null && 
+                      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+      allow write: if request.auth != null && 
+                      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // User Programs collection - users can read their own, create via webhook only
+    match /userPrograms/{userProgramId} {
+      allow read: if request.auth != null && 
+                     (resource.data.userId == request.auth.uid || 
+                      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+      allow create: if false; // Only created via webhooks
+      allow update: if request.auth != null && 
+                       resource.data.userId == request.auth.uid; // Users can update their own progress
+      allow delete: if request.auth != null && 
+                       get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Program Reviews collection
+    match /programReviews/{reviewId} {
+      // Anyone can read program reviews
+      allow get, list: if true;
+      // Only authenticated users can create reviews with their own userId
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+      // Users can update/delete their own program reviews
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.userId;
+    }
   }
 }

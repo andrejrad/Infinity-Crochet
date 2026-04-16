@@ -195,6 +195,35 @@ export default function AccountPage() {
               </div>
             </div>
 
+            {/* My Training Programs Section */}
+            <div className="mt-8 card p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-semibold text-purple-dark">
+                  My Training Programs
+                </h2>
+                <Link 
+                  href="/account/my-programs"
+                  className="text-purple hover:text-purple-dark font-medium"
+                >
+                  View All Programs →
+                </Link>
+              </div>
+              <div className="text-center py-12">
+                <div className="text-6xl mb-4">🎓</div>
+                <p className="text-gray-600 mb-4">
+                  Access your purchased training programs and track your progress
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center items-center max-w-md mx-auto">
+                  <Link href="/account/my-programs" className="btn-primary w-full sm:w-auto">
+                    My Programs
+                  </Link>
+                  <Link href="/training" className="btn-secondary w-full sm:w-auto">
+                    Browse Training
+                  </Link>
+                </div>
+              </div>
+            </div>
+
             {/* Orders Section */}
             <div className="mt-8 card p-6">
               <div className="flex items-center justify-between mb-4">
