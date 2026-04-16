@@ -153,3 +153,58 @@ export interface Review {
   createdAt: Date;
   updatedAt?: Date;
 }
+
+export interface ProgramVideo {
+  id: string;
+  title: string;
+  description: string;
+  youtubeUrl: string;
+  thumbnail?: string;
+  duration?: string;
+  order: number;
+  isFree: boolean;
+}
+
+export interface TrainingProgram {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  price: number;
+  thumbnail: string;
+  estimatedTime: string; // e.g., "4 hours"
+  videos: ProgramVideo[];
+  published: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface VideoProgress {
+  watched: boolean;
+  lastPosition: number; // in seconds
+  completedAt?: Date;
+}
+
+export interface UserProgram {
+  id: string;
+  userId: string;
+  programId: string;
+  programName: string;
+  purchasedAt: Date;
+  progress: { [videoId: string]: VideoProgress };
+  completionPercentage: number;
+}
+
+export interface ProgramReview {
+  id: string;
+  programId: string;
+  programName: string;
+  userId: string;
+  userName: string;
+  userInitials: string;
+  rating: 1 | 2 | 3 | 4 | 5;
+  comment?: string;
+  verifiedPurchase: boolean;
+  createdAt: Date;
+  updatedAt?: Date;
+}
