@@ -34,6 +34,9 @@ service cloud.firestore {
       allow create: if false; // Only created via webhooks
       allow update: if request.auth != null && 
                        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow delete: if request.auth != null && 
+                       (resource.data.userId == request.auth.uid || 
+                        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
     }
     
     // Emails collection - only Firebase Extensions can write
