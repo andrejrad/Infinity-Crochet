@@ -1,6 +1,19 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { db } from '@/lib/firebase';
-import { collection, doc, setDoc, query, where, getDocs, getDoc, Timestamp } from 'firebase/firestore';
+import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+
+// Initialize Firebase Admin
+if (!getApps().length) {
+  initializeApp({
+    credential: cert({
+      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+    }),
+  });
+}
+
+const db = getFirestore();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -20,13 +33,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Verify that the order exists and belongs to the user
-    const orderDoc = await getDoc(doc(db, 'orders', orderId));
-    if (!orderDoc.exists()) {
+    const orderDoc = await db.collection('orders').doc(orderId).get();
+    if (!orderDoc.exists) {
       return res.status(404).json({ error: 'Order not found' });
     }
 
     const orderData = orderDoc.data();
-    if (orderData.userId !== userId) {
+    if (!orderData || orderData.userId !== userId) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
@@ -39,12 +52,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Check if user already has a review for this product
-    const reviewsQuery = query(
-      collection(db, 'reviews'),
-      where('userId', '==', userId),
-      where('productId', '==', productId)
-    );
-    const existingReviews = await getDocs(reviewsQuery);
+    const existingReviews = await db.collection('reviews')
+      .where('userId', '==', userId)
+      .where('productId', '==', productId)
+      .get();
 
     // Generate user initials
     const nameParts = userName.trim().split(' ');
@@ -62,7 +73,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       rating,
       comment: comment || '',
       verifiedPurchase: true,
-      updatedAt: Timestamp.now(),
+      updatedAt: FieldValue.serverTimestamp(),
     };
 
     let reviewId: string;
@@ -70,13 +81,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!existingReviews.empty) {
       // Update existing review
       reviewId = existingReviews.docs[0].id;
-      await setDoc(doc(db, 'reviews', reviewId), reviewData, { merge: true });
+      await db.collection('reviews').doc(reviewId).set(reviewData, { merge: true });
     } else {
       // Create new review
       reviewId = `${userId}_${productId}`;
-      await setDoc(doc(db, 'reviews', reviewId), {
+      await db.collection('reviews').doc(reviewId).set({
         ...reviewData,
-        createdAt: Timestamp.now(),
+        createdAt: FieldValue.serverTimestamp(),
       });
     }
 
