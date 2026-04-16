@@ -109,7 +109,7 @@ export default function AdminProgramsPage() {
                 ← Back to Admin
               </Link>
               <Link
-                href="/admin/programs/new"
+                href="/admin/programs/edit/new"
                 className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
               >
                 + Create Program
@@ -127,7 +127,7 @@ export default function AdminProgramsPage() {
                 Create your first training program to get started
               </p>
               <Link
-                href="/admin/programs/new"
+                href="/admin/programs/edit/new"
                 className="inline-block px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
               >
                 Create Program
