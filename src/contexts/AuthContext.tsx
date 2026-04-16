@@ -6,9 +6,10 @@ import {
   createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
   updateProfile,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  deleteUser
 } from 'firebase/auth';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { User } from '@/types/user';
 
@@ -20,6 +21,7 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   updateUserProfile: (displayName: string) => Promise<void>;
+  deleteAccount: () => Promise<void>;
   isAdmin: boolean;
 }
 
@@ -123,10 +125,45 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const deleteAccount = async () => {
+    if (!auth.currentUser || !user) {
+      throw new Error('No user logged in');
+    }
+
+    const userId = user.uid;
+
+    try {
+      // Delete all user's orders
+      const ordersQuery = query(collection(db, 'orders'), where('userId', '==', userId));
+      const ordersSnapshot = await getDocs(ordersQuery);
+      
+      const deletePromises = ordersSnapshot.docs.map(orderDoc => 
+        deleteDoc(doc(db, 'orders', orderDoc.id))
+      );
+      await Promise.all(deletePromises);
+
+      // Delete user's cart if it exists
+      try {
+        await deleteDoc(doc(db, 'carts', userId));
+      } catch (err) {
+        // Cart might not exist, ignore error
+      }
+
+      // Delete user document
+      await deleteDoc(doc(db, 'users', userId));
+
+      // Delete Firebase Auth account
+      await deleteUser(auth.currentUser);
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      throw error;
+    }
+  };
+
   const isAdmin = user?.role === 'admin';
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, resetPassword, updateUserProfile, isAdmin }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, resetPassword, updateUserProfile, deleteAccount, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );

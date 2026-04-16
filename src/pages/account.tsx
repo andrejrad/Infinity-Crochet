@@ -3,14 +3,20 @@ import SEO from '@/components/SEO';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Link from 'next/link';
 import { useState, FormEvent } from 'react';
+import { useRouter } from 'next/router';
 
 export default function AccountPage() {
-  const { user, isAdmin, updateUserProfile } = useAuth();
+  const router = useRouter();
+  const { user, isAdmin, updateUserProfile, deleteAccount } = useAuth();
   const [isEditingName, setIsEditingName] = useState(false);
   const [newDisplayName, setNewDisplayName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState('');
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
 
   const handleUpdateName = async (e: FormEvent) => {
     e.preventDefault();
@@ -33,6 +39,27 @@ export default function AccountPage() {
       setError(err.message || 'Failed to update name');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteAccount = async (e: FormEvent) => {
+    e.preventDefault();
+    setDeleteError('');
+
+    if (deleteConfirmation !== 'DELETE') {
+      setDeleteError('Please type DELETE to confirm');
+      return;
+    }
+
+    setDeleteLoading(true);
+
+    try {
+      await deleteAccount();
+      // User will be automatically redirected after account deletion
+      router.push('/');
+    } catch (err: any) {
+      setDeleteError(err.message || 'Failed to delete account');
+      setDeleteLoading(false);
     }
   };
 
@@ -196,8 +223,89 @@ export default function AccountPage() {
                 </div>
               </div>
             </div>
+
+            {/* Danger Zone */}
+            <div className="mt-8 card p-6 border-2 border-red-200">
+              <h2 className="text-2xl font-semibold text-red-600 mb-4">
+                Danger Zone
+              </h2>
+              <p className="text-gray-700 mb-4">
+                Once you delete your account, there is no going back. This action cannot be undone.
+              </p>
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+              >
+                Delete Account
+              </button>
+            </div>
           </div>
         </div>
+
+        {/* Delete Account Confirmation Modal */}
+        {showDeleteModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8">
+              <h2 className="text-2xl font-bold text-red-600 mb-2">
+                Delete Account
+              </h2>
+              <p className="text-gray-700 mb-4">
+                This action is <strong>permanent and cannot be undone</strong>. All of your data will be deleted:
+              </p>
+
+              <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+                <ul className="list-disc pl-5 space-y-2 text-sm text-red-800">
+                  <li>Your account and profile information</li>
+                  <li>All order history and records</li>
+                  <li>Shopping cart contents</li>
+                  <li>All personal data</li>
+                </ul>
+              </div>
+
+              {deleteError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+                  {deleteError}
+                </div>
+              )}
+
+              <form onSubmit={handleDeleteAccount}>
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Type <strong>DELETE</strong> to confirm:
+                  </label>
+                  <input
+                    type="text"
+                    value={deleteConfirmation}
+                    onChange={(e) => setDeleteConfirmation(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    placeholder="DELETE"
+                  />
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowDeleteModal(false);
+                      setDeleteConfirmation('');
+                      setDeleteError('');
+                    }}
+                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={deleteLoading || deleteConfirmation !== 'DELETE'}
+                    className="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {deleteLoading ? 'Deleting...' : 'Delete My Account'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </ProtectedRoute>
   );
