@@ -4,9 +4,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import SEO from '@/components/SEO';
 import ProductCard from '@/components/ProductCard';
+import StarRating from '@/components/StarRating';
 import { collection, getDocs, query, where, limit } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import type { Product, Category } from '@/types/user';
+import type { Product, Category, Review } from '@/types/user';
 import { AVAILABLE_COLORS } from '@/components/ColorMultiSelect';
 import { useCart } from '@/contexts/CartContext';
 
@@ -16,6 +17,7 @@ export default function ProductPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [categoryName, setCategoryName] = useState<string>('');
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -103,6 +105,27 @@ export default function ProductPage() {
           .slice(0, 4);
         setRelatedProducts(related);
 
+        // Fetch reviews for this product
+        const reviewsRef = collection(db, 'reviews');
+        const reviewsQuery = query(reviewsRef, where('productId', '==', productDoc.id));
+        const reviewsSnapshot = await getDocs(reviewsQuery);
+        const reviewsData = reviewsSnapshot.docs.map(doc => {
+          const data = doc.data() as Review;
+          return {
+            ...data,
+            id: doc.id,
+            createdAt: data.createdAt instanceof Date 
+              ? data.createdAt 
+              : new Date((data.createdAt as any).seconds * 1000),
+            updatedAt: data.updatedAt 
+              ? data.updatedAt instanceof Date
+                ? data.updatedAt
+                : new Date((data.updatedAt as any).seconds * 1000)
+              : undefined,
+          };
+        }).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        setReviews(reviewsData);
+
         setLoading(false);
       } catch (error) {
         console.error('Error fetching product data:', error);
@@ -124,6 +147,24 @@ export default function ProductPage() {
   if (!product) {
     return null;
   }
+
+  const formatReviewDate = (date: Date) => {
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+    if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
+    return `${Math.floor(diffDays / 365)} years ago`;
+  };
+
+  const averageRating = reviews.length > 0
+    ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
+    : 0;
+
   return (
     <>
       <SEO 
@@ -593,6 +634,90 @@ export default function ProductPage() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Customer Reviews */}
+        <section className="section-padding bg-white">
+          <div className="container-custom">
+            <div className="max-w-4xl mx-auto">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h2 className="text-3xl md:text-4xl font-bold text-purple-dark mb-2">
+                    Customer Reviews
+                  </h2>
+                  {reviews.length > 0 && (
+                    <div className="flex items-center gap-4">
+                      <StarRating rating={Math.round(averageRating)} readonly size="md" />
+                      <span className="text-lg text-gray-600">
+                        {averageRating.toFixed(1)} out of 5 ({reviews.length} {reviews.length === 1 ? 'review' : 'reviews'})
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {reviews.length === 0 ? (
+                <div className="text-center py-12 bg-gray-50 rounded-lg">
+                  <svg
+                    className="mx-auto h-16 w-16 text-gray-400 mb-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+                    />
+                  </svg>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    No reviews yet
+                  </h3>
+                  <p className="text-gray-600">
+                    Be the first to review this product after purchasing!
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {reviews.map((review) => (
+                    <div key={review.id} className="border-b border-gray-200 pb-6 last:border-0">
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className="font-semibold text-gray-900">
+                              {review.userInitials}
+                            </span>
+                            {review.verifiedPurchase && (
+                              <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">
+                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clipRule="evenodd"
+                                  />
+                                </svg>
+                                Verified Purchase
+                              </span>
+                            )}
+                          </div>
+                          <StarRating rating={review.rating} readonly size="sm" />
+                        </div>
+                        <span className="text-sm text-gray-500">
+                          {formatReviewDate(review.createdAt)}
+                        </span>
+                      </div>
+                      {review.comment && (
+                        <p className="text-gray-700 leading-relaxed">
+                          {review.comment}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </section>

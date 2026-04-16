@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import CategoryTile from '@/components/CategoryTile';
 import SEO from '@/components/SEO';
+import StarRating from '@/components/StarRating';
 import Link from 'next/link';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import type { Category, Product } from '@/types/user';
+import type { Category, Product, Review } from '@/types/user';
 
 export default function Shop() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -13,6 +14,8 @@ export default function Shop() {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [searchResults, setSearchResults] = useState<Product[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [averageRating, setAverageRating] = useState(0);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -53,6 +56,26 @@ export default function Shop() {
   }, []);
 
   useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const reviewsRef = collection(db, 'reviews');
+        const reviewsSnapshot = await getDocs(reviewsRef);
+        const reviewsData = reviewsSnapshot.docs.map(doc => doc.data()) as Review[];
+        setReviews(reviewsData);
+        
+        if (reviewsData.length > 0) {
+          const avg = reviewsData.reduce((sum, review) => sum + review.rating, 0) / reviewsData.length;
+          setAverageRating(avg);
+        }
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+      }
+    };
+
+    fetchReviews();
+  }, []);
+
+  useEffect(() => {
     if (searchQuery.trim() === '') {
       setSearchResults([]);
       return;
@@ -82,9 +105,19 @@ export default function Shop() {
           <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
             Infinity Crochet Shop
           </h1>
-          <p className="text-xl text-white/90 max-w-2xl mx-auto mb-8">
+          <p className="text-xl text-white/90 max-w-2xl mx-auto mb-4">
             Discover full collection of handmade crochet treasures
           </p>
+          
+          {/* Shop Rating */}
+          {reviews.length > 0 && (
+            <div className="flex items-center justify-center gap-3 mb-8">
+              <StarRating rating={Math.round(averageRating)} readonly size="md" />
+              <span className="text-white font-medium">
+                {averageRating.toFixed(1)} average rating from {reviews.length} {reviews.length === 1 ? 'review' : 'reviews'}
+              </span>
+            </div>
+          )}
           
           {/* Global Search */}
           <div className="max-w-2xl mx-auto">

@@ -7,13 +7,17 @@ import { db } from '../../lib/firebase';
 import { useAuth } from '../../contexts/AuthContext';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
-import type { Order } from '../../types/user';
+import StarRating from '../../components/StarRating';
+import type { Order, Review } from '../../types/user';
 
 export default function OrderHistory() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [reviews, setReviews] = useState<Record<string, Review>>({});
+  const [reviewForms, setReviewForms] = useState<Record<string, { rating: number; comment: string }>>({});
+  const [submittingReview, setSubmittingReview] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -85,6 +89,9 @@ export default function OrderHistory() {
       const enrichedOrders = await enrichOrdersWithProductImages(ordersData);
       
       setOrders(enrichedOrders);
+      
+      // Fetch reviews after orders are loaded
+      await fetchReviews();
     } catch (error) {
       console.error('Error fetching orders:', error);
       
@@ -95,6 +102,124 @@ export default function OrderHistory() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchReviews = async () => {
+    if (!user) return;
+
+    try {
+      const reviewsRef = collection(db, 'reviews');
+      const q = query(reviewsRef, where('userId', '==', user.uid));
+      const querySnapshot = await getDocs(q);
+      
+      const reviewsMap: Record<string, Review> = {};
+      const formsMap: Record<string, { rating: number; comment: string }> = {};
+      
+      querySnapshot.docs.forEach(doc => {
+        const reviewData = doc.data() as Review;
+        reviewsMap[reviewData.productId] = {
+          ...reviewData,
+          id: doc.id,
+          createdAt: reviewData.createdAt instanceof Date 
+            ? reviewData.createdAt 
+            : new Date((reviewData.createdAt as any).seconds * 1000),
+          updatedAt: reviewData.updatedAt 
+            ? reviewData.updatedAt instanceof Date
+              ? reviewData.updatedAt
+              : new Date((reviewData.updatedAt as any).seconds * 1000)
+            : undefined,
+        };
+        
+        // Pre-populate form with existing review
+        formsMap[reviewData.productId] = {
+          rating: reviewData.rating,
+          comment: reviewData.comment || '',
+        };
+      });
+      
+      setReviews(reviewsMap);
+      setReviewForms(formsMap);
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+    }
+  };
+
+  const handleSubmitReview = async (orderId: string, productId: string, productName: string) => {
+    if (!user) return;
+
+    const formData = reviewForms[productId];
+    if (!formData || formData.rating === 0) {
+      alert('Please select a rating');
+      return;
+    }
+
+    setSubmittingReview(productId);
+
+    try {
+      const response = await fetch('/api/submit-review', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productId,
+          productName,
+          orderId,
+          userId: user.uid,
+          userName: user.displayName || 'Anonymous',
+          rating: formData.rating,
+          comment: formData.comment || undefined,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data.message);
+        // Refresh reviews
+        await fetchReviews();
+      } else {
+        alert(data.error || 'Failed to submit review');
+      }
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      alert('Failed to submit review. Please try again.');
+    } finally {
+      setSubmittingReview(null);
+    }
+  };
+
+  const handleRatingChange = (productId: string, rating: 1 | 2 | 3 | 4 | 5) => {
+    setReviewForms(prev => ({
+      ...prev,
+      [productId]: {
+        rating,
+        comment: prev[productId]?.comment || '',
+      },
+    }));
+  };
+
+  const handleCommentChange = (productId: string, comment: string) => {
+    setReviewForms(prev => ({
+      ...prev,
+      [productId]: {
+        rating: prev[productId]?.rating || 0,
+        comment,
+      },
+    }));
+  };
+
+  const formatReviewDate = (date: Date) => {
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+    if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
+    return `${Math.floor(diffDays / 365)} years ago`;
   };
 
   const getStatusColor = (status: string) => {
@@ -225,34 +350,103 @@ export default function OrderHistory() {
 
                     {/* Order Items */}
                     <div className="p-6">
-                      <div className="space-y-4">
+                      <div className="space-y-6">
                         {order.products.map((product, index) => {
                           const colorValues = product.selectedColors
                             ? Object.values(product.selectedColors).filter(Boolean)
                             : [];
+                          const productId = product.id || product.productId || '';
+                          const existingReview = reviews[productId];
+                          const formData = reviewForms[productId] || { rating: 0, comment: '' };
+                          
                           return (
-                          <div key={index} className="flex gap-4">
-                            <img
-                              src={product.image || '/placeholder.jpg'}
-                              alt={product.name}
-                              className="w-20 h-20 object-cover rounded-lg"
-                            />
-                            <div className="flex-1">
-                              <h3 className="font-medium text-gray-900">
-                                {product.name}
-                              </h3>
-                              {colorValues.length > 0 && (
-                                <p className="text-sm text-gray-500">
-                                  Colors: {colorValues.join(', ')}
+                          <div key={index} className="border-b border-gray-100 pb-6 last:border-0 last:pb-0">
+                            <div className="flex gap-4 mb-4">
+                              <img
+                                src={product.image || '/placeholder.jpg'}
+                                alt={product.name}
+                                className="w-20 h-20 object-cover rounded-lg"
+                              />
+                              <div className="flex-1">
+                                <h3 className="font-medium text-gray-900">
+                                  {product.name}
+                                </h3>
+                                {colorValues.length > 0 && (
+                                  <p className="text-sm text-gray-500">
+                                    Colors: {colorValues.join(', ')}
+                                  </p>
+                                )}
+                                <p className="text-sm text-gray-600">
+                                  Quantity: {product.quantity}
                                 </p>
-                              )}
-                              <p className="text-sm text-gray-600">
-                                Quantity: {product.quantity}
+                              </div>
+                              <p className="font-medium text-gray-900">
+                                ${(product.price * product.quantity).toFixed(2)}
                               </p>
                             </div>
-                            <p className="font-medium text-gray-900">
-                              ${(product.price * product.quantity).toFixed(2)}
-                            </p>
+
+                            {/* Review Section */}
+                            {productId && (
+                              <div className="mt-4 bg-gray-50 rounded-lg p-4">
+                                {existingReview ? (
+                                  <div>
+                                    <div className="flex items-center justify-between mb-3">
+                                      <h4 className="text-sm font-medium text-gray-900">Your Review</h4>
+                                      <span className="text-xs text-gray-500">
+                                        {existingReview.updatedAt 
+                                          ? `Updated ${formatReviewDate(existingReview.updatedAt)}`
+                                          : formatReviewDate(existingReview.createdAt)
+                                        }
+                                      </span>
+                                    </div>
+                                    <div className="mb-3">
+                                      <StarRating rating={formData.rating} readonly={submittingReview === productId} onRatingChange={(rating) => handleRatingChange(productId, rating)} size="md" />
+                                    </div>
+                                    <textarea
+                                      value={formData.comment}
+                                      onChange={(e) => handleCommentChange(productId, e.target.value)}
+                                      placeholder="Share your experience with this product... (optional)"
+                                      disabled={submittingReview === productId}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none disabled:bg-gray-100"
+                                      rows={3}
+                                    />
+                                    <button
+                                      onClick={() => handleSubmitReview(order.id!, productId, product.name)}
+                                      disabled={submittingReview === productId || formData.rating === 0}
+                                      className="mt-3 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                                    >
+                                      {submittingReview === productId ? 'Updating...' : 'Update Review'}
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <div>
+                                    <h4 className="text-sm font-medium text-gray-900 mb-3">Rate this product</h4>
+                                    <div className="mb-3">
+                                      <StarRating 
+                                        rating={formData.rating} 
+                                        onRatingChange={(rating) => handleRatingChange(productId, rating)} 
+                                        size="md" 
+                                      />
+                                    </div>
+                                    <textarea
+                                      value={formData.comment}
+                                      onChange={(e) => handleCommentChange(productId, e.target.value)}
+                                      placeholder="Share your experience with this product... (optional)"
+                                      disabled={submittingReview === productId}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none disabled:bg-gray-100"
+                                      rows={3}
+                                    />
+                                    <button
+                                      onClick={() => handleSubmitReview(order.id!, productId, product.name)}
+                                      disabled={submittingReview === productId || formData.rating === 0}
+                                      className="mt-3 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                                    >
+                                      {submittingReview === productId ? 'Submitting...' : 'Submit Review'}
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            )}
                           </div>
                         );})}
                       </div>

@@ -348,10 +348,21 @@ function generateStatusChangeEmail(order, oldStatus) {
         <h3>Delivery Confirmed:</h3>
         <p>Your handmade crochet items have been delivered! We hope you love them!</p>
         
+        <div class="order-box" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; margin: 30px 0;">
+          <h3 style="color: white; margin: 0 0 15px 0;">Love Your Items? Share Your Experience! ⭐</h3>
+          <p style="margin: 0 0 20px 0; color: rgba(255,255,255,0.9);">
+            Your review helps others discover handmade treasures and supports our small business
+          </p>
+          <a href="https://infinity-crochet.com/account/orders" 
+             style="display: inline-block; padding: 15px 30px; background: white; color: #667eea; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+            Leave a Review
+          </a>
+        </div>
+        
         <h3>Share Your Experience:</h3>
         <ul style="padding-left: 20px;">
           <li>We'd love to see your items! Tag us on social media</li>
-          <li>Leave us a review to help others discover Infinity Crochet</li>
+          <li>Leave a review to help others discover Infinity Crochet</li>
           <li>Have any issues? Contact us and we'll make it right</li>
         </ul>
         

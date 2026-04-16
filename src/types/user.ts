@@ -138,3 +138,18 @@ export interface CartItem {
     option3?: string;
   };
 }
+
+export interface Review {
+  id: string;
+  productId: string;
+  productName: string;
+  orderId: string;
+  userId: string;
+  userName: string;
+  userInitials: string;
+  rating: 1 | 2 | 3 | 4 | 5;
+  comment?: string;
+  verifiedPurchase: boolean;
+  createdAt: Date;
+  updatedAt?: Date;
+}
