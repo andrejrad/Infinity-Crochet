@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import Hero from '@/components/Hero';
 import CategoryTile from '@/components/CategoryTile';
 import ProductCard from '@/components/ProductCard';
@@ -117,7 +118,7 @@ export default function Home() {
             </p>
             
             <div className="grid md:grid-cols-2 gap-8 mt-12">
-              <div className="bg-white/10 backdrop-blur-sm px-8 py-1 rounded-soft">
+              <Link href="/training" className="bg-white/10 backdrop-blur-sm px-8 py-1 rounded-soft hover:bg-white/20 transition-all cursor-pointer">
                 <div className="mb-2 flex justify-center md:justify-start">
                   <img src="/images/online.png" alt="Online Training" className="h-64 w-64 object-contain" />
                 </div>
@@ -126,7 +127,7 @@ export default function Home() {
                   Learn at your own pace with personalized video lessons and one-on-one guidance. 
                   Perfect for busy schedules.
                 </p>
-              </div>
+              </Link>
               <div className="bg-white/10 backdrop-blur-sm px-8 py-1 rounded-soft">
                 <div className="mb-2 flex justify-center md:justify-start">
                   <img src="/images/in-person.png" alt="In-Person Workshops" className="h-64 w-64 object-contain" />
