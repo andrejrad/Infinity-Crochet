@@ -3,7 +3,8 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
 import { collection, doc, getDoc, setDoc, addDoc, Timestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import type { TrainingProgram, ProgramVideo } from '@/types/user';
 
@@ -13,6 +14,7 @@ export default function ProgramEditorPage() {
   const { user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
   const [programData, setProgramData] = useState({
@@ -108,6 +110,45 @@ export default function ProgramEditorPage() {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
+  };
+
+  const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please upload an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size should be less than 5MB');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      // Create a unique filename
+      const timestamp = Date.now();
+      const filename = `program-thumbnails/${timestamp}-${file.name}`;
+      const storageRef = ref(storage, filename);
+
+      // Upload file
+      await uploadBytes(storageRef, file);
+
+      // Get download URL
+      const downloadURL = await getDownloadURL(storageRef);
+
+      // Update program data
+      handleProgramChange('thumbnail', downloadURL);
+    } catch (error) {
+      console.error('Error uploading thumbnail:', error);
+      alert('Failed to upload thumbnail: ' + (error as Error).message);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleProgramChange = (field: string, value: any) => {
@@ -360,21 +401,33 @@ export default function ProgramEditorPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Thumbnail URL
+                  Thumbnail Image
                 </label>
                 <input
-                  type="url"
-                  value={programData.thumbnail}
-                  onChange={(e) => handleProgramChange('thumbnail', e.target.value)}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleThumbnailUpload}
+                  disabled={uploading}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="https://example.com/thumbnail.jpg"
                 />
+                {uploading && (
+                  <p className="text-sm text-purple-600 mt-1">Uploading image...</p>
+                )}
                 {programData.thumbnail && (
-                  <img
-                    src={programData.thumbnail}
-                    alt="Thumbnail preview"
-                    className="mt-2 w-48 h-28 object-cover rounded border"
-                  />
+                  <div className="mt-2">
+                    <img
+                      src={programData.thumbnail}
+                      alt="Thumbnail preview"
+                      className="w-48 h-28 object-cover rounded border"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleProgramChange('thumbnail', '')}
+                      className="mt-1 text-sm text-red-600 hover:text-red-800"
+                    >
+                      Remove thumbnail
+                    </button>
+                  </div>
                 )}
               </div>
 
