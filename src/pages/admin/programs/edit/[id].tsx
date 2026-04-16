@@ -26,6 +26,14 @@ export default function ProgramEditorPage() {
   });
 
   const [videos, setVideos] = useState<ProgramVideo[]>([]);
+  const [editingVideoId, setEditingVideoId] = useState<string | null>(null);
+  const [editingVideo, setEditingVideo] = useState({
+    title: '',
+    description: '',
+    youtubeUrl: '',
+    duration: '',
+    isFree: false,
+  });
   const [newVideo, setNewVideo] = useState({
     title: '',
     description: '',
@@ -138,6 +146,50 @@ export default function ProgramEditorPage() {
 
   const removeVideo = (videoId: string) => {
     setVideos(videos.filter(v => v.id !== videoId).map((v, index) => ({ ...v, order: index })));
+  };
+
+  const startEditingVideo = (video: ProgramVideo) => {
+    setEditingVideoId(video.id);
+    setEditingVideo({
+      title: video.title,
+      description: video.description || '',
+      youtubeUrl: video.youtubeUrl,
+      duration: video.duration || '',
+      isFree: video.isFree,
+    });
+  };
+
+  const updateVideo = () => {
+    if (!editingVideo.title || !editingVideo.youtubeUrl) {
+      alert('Please fill in at least title and YouTube URL');
+      return;
+    }
+
+    setVideos(videos.map(v => 
+      v.id === editingVideoId 
+        ? {
+            ...v,
+            title: editingVideo.title,
+            description: editingVideo.description,
+            youtubeUrl: editingVideo.youtubeUrl,
+            duration: editingVideo.duration,
+            isFree: editingVideo.isFree,
+          }
+        : v
+    ));
+
+    cancelEditing();
+  };
+
+  const cancelEditing = () => {
+    setEditingVideoId(null);
+    setEditingVideo({
+      title: '',
+      description: '',
+      youtubeUrl: '',
+      duration: '',
+      isFree: false,
+    });
   };
 
   const moveVideo = (index: number, direction: 'up' | 'down') => {
@@ -350,46 +402,143 @@ export default function ProgramEditorPage() {
               <div className="mb-6 space-y-3">
                 {videos.map((video, index) => (
                   <div key={video.id} className="flex items-start gap-4 p-4 border border-gray-200 rounded-lg">
-                    <div className="flex flex-col gap-2">
-                      <button
-                        onClick={() => moveVideo(index, 'up')}
-                        disabled={index === 0}
-                        className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30"
-                      >
-                        ▲
-                      </button>
-                      <button
-                        onClick={() => moveVideo(index, 'down')}
-                        disabled={index === videos.length - 1}
-                        className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30"
-                      >
-                        ▼
-                      </button>
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="font-medium text-gray-900">
-                            {index + 1}. {video.title}
-                            {video.isFree && (
-                              <span className="ml-2 px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded">
-                                FREE
-                              </span>
-                            )}
-                          </h4>
-                          <p className="text-sm text-gray-600">{video.description}</p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            {video.youtubeUrl} {video.duration && `• ${video.duration}`}
-                          </p>
+                    {editingVideoId === video.id ? (
+                      // Edit Mode
+                      <div className="flex-1">
+                        <h4 className="font-medium text-gray-900 mb-4">Edit Video</h4>
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Video Title <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={editingVideo.title}
+                              onChange={(e) => setEditingVideo({ ...editingVideo, title: e.target.value })}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              YouTube URL <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                              type="url"
+                              value={editingVideo.youtubeUrl}
+                              onChange={(e) => setEditingVideo({ ...editingVideo, youtubeUrl: e.target.value })}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Description
+                            </label>
+                            <textarea
+                              value={editingVideo.description}
+                              onChange={(e) => setEditingVideo({ ...editingVideo, description: e.target.value })}
+                              rows={2}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Duration
+                              </label>
+                              <input
+                                type="text"
+                                value={editingVideo.duration}
+                                onChange={(e) => setEditingVideo({ ...editingVideo, duration: e.target.value })}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                placeholder="e.g., 12:45"
+                              />
+                            </div>
+
+                            <div className="flex items-center pt-6">
+                              <label className="flex items-center gap-2">
+                                <input
+                                  type="checkbox"
+                                  checked={editingVideo.isFree}
+                                  onChange={(e) => setEditingVideo({ ...editingVideo, isFree: e.target.checked })}
+                                  className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                                />
+                                <span className="text-sm text-gray-700">Free preview video</span>
+                              </label>
+                            </div>
+                          </div>
+
+                          <div className="flex gap-3 pt-2">
+                            <button
+                              onClick={updateVideo}
+                              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                            >
+                              Save Changes
+                            </button>
+                            <button
+                              onClick={cancelEditing}
+                              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                            >
+                              Cancel
+                            </button>
+                          </div>
                         </div>
-                        <button
-                          onClick={() => removeVideo(video.id)}
-                          className="text-red-600 hover:text-red-800 text-sm"
-                        >
-                          Remove
-                        </button>
                       </div>
-                    </div>
+                    ) : (
+                      // View Mode
+                      <>
+                        <div className="flex flex-col gap-2">
+                          <button
+                            onClick={() => moveVideo(index, 'up')}
+                            disabled={index === 0}
+                            className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30"
+                          >
+                            ▲
+                          </button>
+                          <button
+                            onClick={() => moveVideo(index, 'down')}
+                            disabled={index === videos.length - 1}
+                            className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30"
+                          >
+                            ▼
+                          </button>
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <h4 className="font-medium text-gray-900">
+                                {index + 1}. {video.title}
+                                {video.isFree && (
+                                  <span className="ml-2 px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded">
+                                    FREE
+                                  </span>
+                                )}
+                              </h4>
+                              <p className="text-sm text-gray-600">{video.description}</p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                {video.youtubeUrl} {video.duration && `• ${video.duration}`}
+                              </p>
+                            </div>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => startEditingVideo(video)}
+                                className="text-purple-600 hover:text-purple-800 text-sm"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => removeVideo(video.id)}
+                                className="text-red-600 hover:text-red-800 text-sm"
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
                 ))}
               </div>
